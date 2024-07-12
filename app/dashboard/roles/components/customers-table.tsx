@@ -1,11 +1,25 @@
 'use client';
 
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { IconButton, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useQuery } from '@tanstack/react-query';
-import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
+import {
+  MaterialReactTable,
+  MRT_ShowHideColumnsButton,
+  MRT_ToggleDensePaddingButton,
+  MRT_ToggleFiltersButton,
+  MRT_ToggleFullScreenButton,
+  MRT_ToggleGlobalFilterButton,
+  useMaterialReactTable,
+  type MRT_ColumnDef,
+  type MRT_ColumnFiltersState,
+  type MRT_PaginationState,
+  type MRT_SortingState,
+} from 'material-react-table';
 
 type Person = {
   name: {
@@ -46,9 +60,23 @@ export function CustomersTable({
     return rows.map((customer) => customer.id);
   }, [rows]);
 
-  const { data, isLoading, isRefetching } = useQuery({
+  const {
+    data: { data = [], meta } = {},
+    isError,
+    isLoading,
+    isRefetching,
+    refetch,
+  } = useQuery({
     queryKey: ['repoData'],
     queryFn: () => fetch('http://localhost:31111/api/admin/administrator-roles').then((res) => res.json()),
+  });
+
+  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [sorting, setSorting] = useState<MRT_SortingState>([]);
+  const [pagination, setPagination] = useState<MRT_PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
   });
 
   const columns = useMemo<MRT_ColumnDef<Person>[]>(
@@ -88,7 +116,19 @@ export function CustomersTable({
       <ThemeProvider theme={theme}>
         <MaterialReactTable
           columns={columns}
-          data={data?.data ?? []}
+          data={data ?? []}
+          initialState={{ showColumnFilters: false }}
+          manualFiltering
+          manualPagination
+          manualSorting
+          muiToolbarAlertBannerProps={
+            isError
+              ? {
+                  color: 'error',
+                  children: 'Error loading data',
+                }
+              : undefined
+          }
           enableRowSelection
           enableColumnOrdering
           enableColumnPinning
@@ -96,6 +136,24 @@ export function CustomersTable({
             isLoading,
             showProgressBars: isRefetching,
           }}
+          onColumnFiltersChange={setColumnFilters}
+          onGlobalFilterChange={setGlobalFilter}
+          onPaginationChange={setPagination}
+          onSortingChange={setSorting}
+          renderToolbarInternalActions={({ table }) => (
+            <>
+              <MRT_ToggleGlobalFilterButton table={table} />
+              <MRT_ToggleFiltersButton table={table} />
+              <MRT_ToggleDensePaddingButton table={table} />
+              <MRT_ShowHideColumnsButton table={table} />
+              <MRT_ToggleFullScreenButton table={table} />
+              <Tooltip arrow title="Refresh Data">
+                <IconButton onClick={() => refetch()}>
+                  <RefreshIcon />
+                </IconButton>
+              </Tooltip>
+            </>
+          )}
         />
       </ThemeProvider>
     </Card>
