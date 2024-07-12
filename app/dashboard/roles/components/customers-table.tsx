@@ -60,6 +60,14 @@ export function CustomersTable({
     return rows.map((customer) => customer.id);
   }, [rows]);
 
+  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [sorting, setSorting] = useState<MRT_SortingState>([]);
+  const [pagination, setPagination] = useState<MRT_PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
   const {
     data: { data = [], meta } = {},
     isError,
@@ -67,16 +75,36 @@ export function CustomersTable({
     isRefetching,
     refetch,
   } = useQuery({
-    queryKey: ['repoData'],
-    queryFn: () => fetch('http://localhost:31111/api/admin/administrator-roles').then((res) => res.json()),
-  });
+    queryKey: [
+      'table-data',
+      columnFilters, //refetch when columnFilters changes
+      globalFilter, //refetch when globalFilter changes
+      pagination.pageIndex, //refetch when pagination.pageIndex changes
+      pagination.pageSize, //refetch when pagination.pageSize changes
+      sorting, //refetch when sorting changes
+    ],
+    // queryFn: () => fetch('http://localhost:31111/api/admin/administrator-roles').then((res) => res.json()),
+    queryFn: async () => {
+      const fetchURL = new URL(
+        '/api/admin/administrator-roles',
+        'http://localhost:31111'
+        // process.env.NODE_ENV === 'production'
+        //   ? 'https://www.material-react-table.com'
+        //   : 'http://localhost:3000',
+      );
 
-  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [sorting, setSorting] = useState<MRT_SortingState>([]);
-  const [pagination, setPagination] = useState<MRT_PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
+      //read our state and pass it to the API as query params
+      fetchURL.searchParams.set('start', `${pagination.pageIndex * pagination.pageSize}`);
+      fetchURL.searchParams.set('size', `${pagination.pageSize}`);
+      fetchURL.searchParams.set('filters', JSON.stringify(columnFilters ?? []));
+      fetchURL.searchParams.set('globalFilter', globalFilter ?? '');
+      fetchURL.searchParams.set('sorting', JSON.stringify(sorting ?? []));
+
+      //use whatever fetch library you want, fetch, axios, etc
+      const response = await fetch(fetchURL.href);
+      const json = await response.json();
+      return json;
+    },
   });
 
   const columns = useMemo<MRT_ColumnDef<Person>[]>(
