@@ -12,7 +12,7 @@ import { config } from '@/config';
 
 import { CustomersFilters } from '../../../components/dashboard/customer/customers-filters';
 import type { Customer } from '../../../components/dashboard/customer/customers-table';
-import { CustomersTable } from './components/customers-table';
+import CustomersTable from './components/customers-table';
 
 export const metadata = { title: `Customers | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -137,12 +137,7 @@ export default function Page(): React.JSX.Element {
         </div>
       </Stack>
       <CustomersFilters />
-      <CustomersTable
-        count={paginatedCustomers.length}
-        page={page}
-        rows={paginatedCustomers}
-        rowsPerPage={rowsPerPage}
-      />
+      <CustomersTable />
     </Stack>
   );
 }
