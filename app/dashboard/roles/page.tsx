@@ -136,7 +136,6 @@ export default function Page(): React.JSX.Element {
           </Button>
         </div>
       </Stack>
-      <CustomersFilters />
       <CustomersTable />
     </Stack>
   );
