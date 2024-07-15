@@ -1,14 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { Delete, Edit, FileCopy, More, MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Box, Divider, IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Box, Button, Divider, IconButton, lighten, Menu, MenuItem, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import { MenuProps } from '@mui/material/Menu';
 import { alpha, createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import { useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
-  MRT_ActionMenuItem,
   MRT_ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton,
   MRT_ToggleFiltersButton,
@@ -116,16 +115,39 @@ const TablePage = (): React.JSX.Element => {
   const columns = useMemo(
     () => [
       {
+        accessorFn: (row) => `${row.id}`,
+        id: 'test',
+        header: 'ID',
+        size: 100,
+        Cell: ({ renderedCellValue, row }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem',
+            }}
+          >
+            <span>ID: {renderedCellValue}--</span>
+          </Box>
+        ),
+      },
+      {
         accessorKey: 'name',
         header: 'Role Name',
+        enableClickToCopy: true,
       },
       {
         accessorKey: 'description',
         header: 'Description',
       },
       {
-        accessorKey: 'created_at',
+        accessorFn: (row) => new Date(row.created_at),
+        id: 'created_at',
         header: 'Created At',
+        filterFn: 'between',
+        filterVariant: 'date',
+        sortingFn: 'datetime',
+        Cell: ({ cell }) => cell.getValue<Date>()?.toLocaleDateString(), //render Date as a string
       },
     ],
     []
@@ -231,30 +253,46 @@ const TablePage = (): React.JSX.Element => {
               </StyledMenu>
             </Box>
           )}
-          // renderRowActionMenuItems={({ row, table }) => [
-          //   <IconButton
-          //     color="secondary"
-          //     onClick={() => {
-          //       table.setEditingRow(row);
-          //     }}
-          //   >
-          //     <Edit />
-          //   </IconButton>,
-          //   // <MRT_ActionMenuItem
-          //   //   icon={<Edit />}
-          //   //   key="edit"
-          //   //   label="Edit"
-          //   //   onClick={() => console.info('Edit')}
-          //   //   table={table}
-          //   // />,
-          //   // <MRT_ActionMenuItem
-          //   //   icon={<Delete />}
-          //   //   key="delete"
-          //   //   label="Delete"
-          //   //   onClick={() => console.info('Delete')}
-          //   //   table={table}
-          //   // />,
-          // ]}
+          paginationDisplayMode="pages"
+          muiPaginationProps={{
+            color: 'secondary',
+            rowsPerPageOptions: [10, 20, 30],
+            shape: 'rounded',
+            variant: 'outlined',
+          }}
+          positionToolbarAlertBanner="top"
+          renderBottomToolbarCustomActions={({ table }) => {
+            const handleDelete = () => {
+              table.getSelectedRowModel().flatRows.map((row) => {
+                alert('deleting ' + row.getValue('name'));
+              });
+            };
+            return (
+              <Box
+                sx={(theme) => ({
+                  backgroundColor: lighten(theme.palette.background.default, 0.05),
+                  display: 'flex',
+                  gap: '0.5rem',
+                  p: '8px',
+                  justifyContent: 'space-between',
+                })}
+              >
+                <Box>
+                  <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+                    <Button
+                      color="error"
+                      onClick={handleDelete}
+                      variant="contained"
+                      startIcon={<Delete />}
+                      disabled={!table.getIsSomeRowsSelected()}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
+                </Box>
+              </Box>
+            );
+          }}
         />
       </ThemeProvider>
     </Card>
