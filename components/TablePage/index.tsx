@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Delete, Edit, FileCopy, More, MoreHoriz } from '@mui/icons-material';
+import { formatDate } from '@/utils/dateUtils';
+import { Delete, Edit, FileCopy, MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, Button, Divider, IconButton, lighten, Menu, MenuItem, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
@@ -112,7 +113,7 @@ const TablePage = (): React.JSX.Element => {
     },
   });
 
-  const columns = useMemo(
+  const columns = useMemo<MRT_ColumnDef<any, any>[]>(
     () => [
       {
         accessorFn: (row) => `${row.id}`,
@@ -141,13 +142,14 @@ const TablePage = (): React.JSX.Element => {
         header: 'Description',
       },
       {
-        accessorFn: (row) => new Date(row.created_at),
-        id: 'created_at',
+        // accessorFn: (row) => new Date(row.created_at),
+        // id: 'created_at',
+        accessorKey: 'created_at',
         header: 'Created At',
         filterFn: 'between',
         filterVariant: 'date',
         sortingFn: 'datetime',
-        Cell: ({ cell }) => cell.getValue<Date>()?.toLocaleDateString(), //render Date as a string
+        Cell: ({ cell }) => formatDate(cell.getValue() as string, 'YYYY-MM-DD HH:mm:ss'),
       },
     ],
     []

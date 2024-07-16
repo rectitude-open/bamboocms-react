@@ -2,6 +2,9 @@
 
 import * as React from 'react';
 import type { Viewport } from 'next';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 
 import '@/styles/global.css';
 
@@ -19,6 +22,13 @@ export const viewport = { width: 'device-width', initialScale: 1 } satisfies Vie
 interface LayoutProps {
   children: React.ReactNode;
 }
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+const browserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const browserLocale = Intl.DateTimeFormat().resolvedOptions().locale;
+dayjs.tz.setDefault(browserTimeZone);
+dayjs.locale(browserLocale);
 
 export default function Layout({ children }: LayoutProps): React.JSX.Element {
   return (
