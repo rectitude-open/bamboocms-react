@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { formatDate } from '@/utils/dateUtils';
 import { Delete, Edit, FileCopy, MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -19,6 +19,8 @@ import {
   type MRT_PaginationState,
   type MRT_SortingState,
 } from 'material-react-table';
+
+import { TablePageProps } from './TablePage.types';
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -57,9 +59,9 @@ const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 
-const TablePage = (): React.JSX.Element => {
+const TablePage = ({ services }: TablePageProps) => {
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [globalFilter, setGlobalFilter] = useState(undefined);
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
@@ -89,27 +91,16 @@ const TablePage = (): React.JSX.Element => {
       pagination.pageSize, //refetch when pagination.pageSize changes
       sorting, //refetch when sorting changes
     ],
-    // queryFn: () => fetch('http://localhost:31111/api/admin/administrator-roles').then((res) => res.json()),
     queryFn: async () => {
-      const fetchURL = new URL(
-        '/api/admin/administrator-roles',
-        'http://localhost:31111'
-        // process.env.NODE_ENV === 'production'
-        //   ? 'https://www.material-react-table.com'
-        //   : 'http://localhost:3000',
-      );
-
-      //read our state and pass it to the API as query params
-      fetchURL.searchParams.set('start', `${pagination.pageIndex * pagination.pageSize}`);
-      fetchURL.searchParams.set('size', `${pagination.pageSize}`);
-      fetchURL.searchParams.set('filters', JSON.stringify(columnFilters ?? []));
-      fetchURL.searchParams.set('globalFilter', globalFilter ?? '');
-      fetchURL.searchParams.set('sorting', JSON.stringify(sorting ?? []));
-
-      //use whatever fetch library you want, fetch, axios, etc
-      const response = await fetch(fetchURL.href);
-      const json = await response.json();
-      return json;
+      const params = {
+        start: `${pagination.pageIndex * pagination.pageSize}`,
+        globalFilter: globalFilter,
+        size: `${pagination.pageSize}`,
+        filters: JSON.stringify(columnFilters ?? []),
+        sorting: JSON.stringify(sorting ?? []),
+      };
+      const response = await services.fetch(params);
+      return response;
     },
   });
 

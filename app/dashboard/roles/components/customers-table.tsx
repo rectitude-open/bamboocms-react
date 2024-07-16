@@ -5,10 +5,12 @@ import { Card } from '@mui/material';
 
 import TablePage from '@/components/TablePage';
 
+import * as services from '../services';
+
 const CustomersTable = () => {
   return (
     <Card>
-      <TablePage />
+      <TablePage services={services} />
     </Card>
   );
 };
