@@ -15,7 +15,14 @@ import { LocalizationProvider } from '../components/core/localization-provider';
 import { ThemeProvider } from '../components/core/theme-provider/theme-provider';
 import { UserProvider } from '../contexts/user-context';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
 
 export const viewport = { width: 'device-width', initialScale: 1 } satisfies Viewport;
 
