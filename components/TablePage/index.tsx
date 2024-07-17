@@ -20,6 +20,8 @@ import {
   type MRT_SortingState,
 } from 'material-react-table';
 
+import type { ApiResponse } from '@/types/api';
+
 import { TablePageProps } from './TablePage.types';
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -76,26 +78,13 @@ const TablePage = ({ services }: TablePageProps) => {
     setAnchorEl(null);
   };
 
-  const {
-    data: { data = [], meta } = {},
-    isError,
-    isLoading,
-    isRefetching,
-    refetch,
-  } = useQuery({
-    queryKey: [
-      'table-data',
-      columnFilters, //refetch when columnFilters changes
-      globalFilter, //refetch when globalFilter changes
-      pagination.pageIndex, //refetch when pagination.pageIndex changes
-      pagination.pageSize, //refetch when pagination.pageSize changes
-      sorting, //refetch when sorting changes
-    ],
+  const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
+    queryKey: ['table-data', columnFilters, globalFilter, pagination.pageIndex, pagination.pageSize, sorting],
     queryFn: async () => {
       const params = {
-        start: `${pagination.pageIndex * pagination.pageSize}`,
+        current_page: pagination.pageIndex + 1,
         globalFilter: globalFilter,
-        size: `${pagination.pageSize}`,
+        per_page: pagination.pageSize,
         filters: JSON.stringify(columnFilters ?? []),
         sorting: JSON.stringify(sorting ?? []),
       };
@@ -104,7 +93,7 @@ const TablePage = ({ services }: TablePageProps) => {
     },
   });
 
-  const columns = useMemo<MRT_ColumnDef<any, any>[]>(
+  const columns = useMemo<MRT_ColumnDef<Record<string, unknown>>[]>(
     () => [
       {
         accessorFn: (row) => `${row.id}`,
@@ -165,7 +154,7 @@ const TablePage = ({ services }: TablePageProps) => {
       <ThemeProvider theme={theme}>
         <MaterialReactTable
           columns={columns}
-          data={data ?? []}
+          data={(data?.data as Record<string, unknown>[]) ?? []}
           initialState={{ columnPinning: { right: ['mrt-row-actions'] } }}
           manualFiltering
           manualPagination
@@ -184,6 +173,11 @@ const TablePage = ({ services }: TablePageProps) => {
           state={{
             isLoading,
             showProgressBars: isRefetching,
+            columnFilters,
+            globalFilter,
+            pagination,
+            showAlertBanner: isError,
+            sorting,
           }}
           onColumnFiltersChange={setColumnFilters}
           onGlobalFilterChange={setGlobalFilter}
@@ -286,6 +280,7 @@ const TablePage = ({ services }: TablePageProps) => {
               </Box>
             );
           }}
+          rowCount={data?.meta?.total ?? 0}
         />
       </ThemeProvider>
     </Card>
