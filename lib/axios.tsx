@@ -1,5 +1,5 @@
-import { Alert, Snackbar } from '@mui/material';
 import axios from 'axios';
+import { enqueueSnackbar } from 'notistack';
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -25,51 +25,23 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      const errorMessage = error.response.data?.message || 'API Request Error';
-      // console.error(errorMessage);
-      // showToast(errorMessage);
-
       switch (error.response.status) {
         case 401:
-          // ...
-
-          switch (error.response.status) {
-            case 401:
-              return (
-                <Snackbar open={true} autoHideDuration={6000}>
-                  <Alert severity="error">Unauthorized, please log in again</Alert>
-                </Snackbar>
-              );
-            case 403:
-              return (
-                <Snackbar open={true} autoHideDuration={6000}>
-                  <Alert severity="error">Access denied</Alert>
-                </Snackbar>
-              );
-            case 404:
-              return (
-                <Snackbar open={true} autoHideDuration={6000}>
-                  <Alert severity="error">Requested resource not found</Alert>
-                </Snackbar>
-              );
-            case 500:
-              return (
-                <Snackbar open={true} autoHideDuration={6000}>
-                  <Alert severity="error">Server error</Alert>
-                </Snackbar>
-              );
-            default:
-              return (
-                <Snackbar open={true} autoHideDuration={6000}>
-                  <Alert severity="error">{`An error occurred: ${error.response.data.message}`}</Alert>
-                </Snackbar>
-              );
-          }
+          enqueueSnackbar('Unauthorized, please log in again', { variant: 'error', autoHideDuration: 6000 });
+        case 403:
+          enqueueSnackbar('Access denied', { variant: 'error', autoHideDuration: 6000 });
+        case 404:
+          enqueueSnackbar('Resource not found', { variant: 'error', autoHideDuration: 6000 });
+        case 500:
+          enqueueSnackbar('Internal server error', { variant: 'error', autoHideDuration: 6000 });
+        default:
+          const errorMessage = error.response.data?.message || 'API Request Error';
+          enqueueSnackbar(errorMessage, { variant: 'error', autoHideDuration: 6000 });
       }
     } else if (error.request) {
-      console.error('Server not responding');
+      enqueueSnackbar('No response from server', { variant: 'error', autoHideDuration: 6000 });
     } else {
-      console.error('Request error', error.message);
+      enqueueSnackbar(error.message, { variant: 'error', autoHideDuration: 6000 });
     }
     return Promise.reject(error);
   }

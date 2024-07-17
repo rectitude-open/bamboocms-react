@@ -10,6 +10,7 @@ import '@/styles/global.css';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { SnackbarProvider } from 'notistack';
 
 import { LocalizationProvider } from '../components/core/localization-provider';
 import { ThemeProvider } from '../components/core/theme-provider/theme-provider';
@@ -45,7 +46,14 @@ export default function Layout({ children }: LayoutProps): React.JSX.Element {
           <ReactQueryDevtools initialIsOpen={false} />
           <LocalizationProvider>
             <UserProvider>
-              <ThemeProvider>{children}</ThemeProvider>
+              <SnackbarProvider
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+              >
+                <ThemeProvider>{children}</ThemeProvider>
+              </SnackbarProvider>
             </UserProvider>
           </LocalizationProvider>
         </QueryClientProvider>
