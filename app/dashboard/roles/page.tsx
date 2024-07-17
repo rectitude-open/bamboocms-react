@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { Metadata } from 'next';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
@@ -8,7 +9,7 @@ import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import { config } from '@/config';
 
-import CustomersTable from './components/customers-table';
+import RoleTable from './components/RoleTable';
 
 export const metadata = { title: `Customers | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -33,7 +34,7 @@ export default function Page() {
           </Button>
         </div>
       </Stack>
-      <CustomersTable />
+      <RoleTable />
     </Stack>
   );
 }

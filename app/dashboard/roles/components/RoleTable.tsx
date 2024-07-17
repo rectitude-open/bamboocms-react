@@ -7,7 +7,7 @@ import TablePage from '@/components/TablePage';
 
 import * as services from '../services';
 
-const CustomersTable = () => {
+const RoleTable = () => {
   return (
     <Card>
       <TablePage services={services} />
@@ -15,4 +15,4 @@ const CustomersTable = () => {
   );
 };
 
-export default CustomersTable;
+export default RoleTable;

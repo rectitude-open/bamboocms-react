@@ -1,7 +1,7 @@
 import { FetchFunction } from '@/types/api';
 
-export type TablePageProps = {
+export interface TablePageProps {
   services: {
     fetch: FetchFunction;
   };
-};
+}
