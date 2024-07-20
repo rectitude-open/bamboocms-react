@@ -28,12 +28,16 @@ axiosInstance.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           enqueueSnackbar('Unauthorized, please log in again', { variant: 'error', autoHideDuration: 6000 });
+          break;
         case 403:
           enqueueSnackbar('Access denied', { variant: 'error', autoHideDuration: 6000 });
+          break;
         case 404:
           enqueueSnackbar('Resource not found', { variant: 'error', autoHideDuration: 6000 });
+          break;
         case 500:
           enqueueSnackbar('Internal server error', { variant: 'error', autoHideDuration: 6000 });
+          break;
         default:
           const errorMessage = error.response.data?.message || 'API Request Error';
           enqueueSnackbar(errorMessage, { variant: 'error', autoHideDuration: 6000 });
