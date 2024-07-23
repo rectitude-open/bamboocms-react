@@ -61,7 +61,7 @@ const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 
-const TablePage = ({ services }: TablePageProps) => {
+const TablePage = ({ services, columns }: TablePageProps) => {
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState(undefined);
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
@@ -92,48 +92,6 @@ const TablePage = ({ services }: TablePageProps) => {
       return response;
     },
   });
-
-  const columns = useMemo<MRT_ColumnDef<Record<string, unknown>>[]>(
-    () => [
-      {
-        accessorFn: (row) => `${row.id}`,
-        id: 'test',
-        header: 'ID',
-        size: 100,
-        Cell: ({ renderedCellValue, row }) => (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1rem',
-            }}
-          >
-            <span>ID: {renderedCellValue}--</span>
-          </Box>
-        ),
-      },
-      {
-        accessorKey: 'name',
-        header: 'Role Name',
-        enableClickToCopy: true,
-      },
-      {
-        accessorKey: 'description',
-        header: 'Description',
-      },
-      {
-        // accessorFn: (row) => new Date(row.created_at),
-        // id: 'created_at',
-        accessorKey: 'created_at',
-        header: 'Created At',
-        filterFn: 'between',
-        filterVariant: 'date',
-        sortingFn: 'datetime',
-        Cell: ({ cell }) => formatDate(cell.getValue() as string, 'YYYY-MM-DD HH:mm:ss'),
-      },
-    ],
-    []
-  );
 
   const theme = createTheme({
     palette: {
