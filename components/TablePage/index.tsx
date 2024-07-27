@@ -61,6 +61,20 @@ const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+    common: {
+      white: '#ffffff',
+    },
+  },
+});
+
 const TablePage = ({ services, columns }: TablePageProps) => {
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState(undefined);
@@ -90,20 +104,6 @@ const TablePage = ({ services, columns }: TablePageProps) => {
       };
       const response = await services.fetch(params);
       return response;
-    },
-  });
-
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: '#1976d2',
-      },
-      secondary: {
-        main: '#dc004e',
-      },
-      common: {
-        white: '#ffffff',
-      },
     },
   });
 
