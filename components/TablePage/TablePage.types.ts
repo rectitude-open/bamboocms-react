@@ -1,4 +1,4 @@
-import { type MRT_ColumnDef } from 'material-react-table';
+import { MRT_SortingState, type MRT_ColumnDef } from 'material-react-table';
 
 import { type FetchFunction } from '@/types/api';
 
@@ -7,4 +7,5 @@ export interface TablePageProps {
     fetch: FetchFunction;
   };
   columns: MRT_ColumnDef<Record<string, unknown>>[];
+  defaultSorting?: MRT_SortingState;
 }

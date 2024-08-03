@@ -14,7 +14,7 @@ const RoleTable = () => {
     () => [
       {
         accessorFn: (row) => `${row.id}`,
-        id: 'test',
+        id: 'id',
         header: 'ID',
         size: 100,
         Cell: ({ renderedCellValue, row }) => (
@@ -52,9 +52,16 @@ const RoleTable = () => {
     []
   );
 
+  const defaultSorting = [
+    {
+      id: 'id',
+      desc: true,
+    },
+  ];
+
   return (
     <Card>
-      <TablePage services={services} columns={columns} />
+      <TablePage services={services} columns={columns} defaultSorting={defaultSorting} />
     </Card>
   );
 };

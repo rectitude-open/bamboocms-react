@@ -36,10 +36,10 @@ const theme = createTheme({
   },
 });
 
-const TablePage = ({ services, columns }: TablePageProps) => {
+const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) => {
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState(undefined);
-  const [sorting, setSorting] = useState<MRT_SortingState>([]);
+  const [sorting, setSorting] = useState<MRT_SortingState>(defaultSorting);
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -74,7 +74,9 @@ const TablePage = ({ services, columns }: TablePageProps) => {
         <MaterialReactTable
           columns={columns}
           data={(data?.data as Record<string, unknown>[]) ?? []}
-          initialState={{ columnPinning: { right: ['mrt-row-actions'] } }}
+          initialState={{
+            columnPinning: { right: ['mrt-row-actions'] },
+          }}
           manualFiltering
           manualPagination
           manualSorting
@@ -87,7 +89,6 @@ const TablePage = ({ services, columns }: TablePageProps) => {
               : undefined
           }
           enableRowSelection
-          enableColumnOrdering
           enableColumnPinning
           state={{
             isLoading,
