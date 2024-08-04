@@ -33,10 +33,12 @@ const RoleTable = () => {
         accessorKey: 'name',
         header: 'Role Name',
         enableClickToCopy: true,
+        enableSorting: false,
       },
       {
         accessorKey: 'description',
         header: 'Description',
+        enableSorting: false,
       },
       {
         // accessorFn: (row) => new Date(row.created_at),
