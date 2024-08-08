@@ -103,10 +103,9 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
           onGlobalFilterChange={setGlobalFilter}
           onPaginationChange={setPagination}
           onSortingChange={setSorting}
+          columnFilterDisplayMode="popover"
           renderToolbarInternalActions={({ table }) => (
             <>
-              <MRT_ToggleGlobalFilterButton table={table} />
-              <MRT_ToggleFiltersButton table={table} />
               <MRT_ToggleDensePaddingButton table={table} />
               <MRT_ShowHideColumnsButton table={table} />
               <MRT_ToggleFullScreenButton table={table} />
