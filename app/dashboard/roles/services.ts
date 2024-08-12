@@ -8,3 +8,8 @@ export const fetch: FetchFunction = async (params, config = {}) => {
   });
   return data;
 };
+
+export const create = async (data: Record<string, unknown> = {}) => {
+  const response = await axiosInstance.post(`/admin/administrator-roles`, data);
+  return response.data;
+};
