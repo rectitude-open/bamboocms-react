@@ -14,11 +14,7 @@ import { useSnackbar } from 'notistack';
 import type { ApiResponse } from '@/types/api';
 
 import * as services from '../services';
-
-type FormData = {
-  name: string;
-  description: string;
-};
+import { Role } from '../types';
 
 const schema: RJSFSchema = {
   type: 'object',
@@ -45,7 +41,7 @@ const uiSchema = {
   },
 };
 
-const Form = withTheme<FormData>(Theme);
+const Form = withTheme<Role>(Theme);
 
 const onError = (errors: any) => console.log(errors);
 
@@ -54,7 +50,7 @@ const Page = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
-  const [formData, setFormData] = useState<FormData | undefined>();
+  const [formData, setFormData] = useState<Role | undefined>();
   const router = useRouter();
 
   const id = searchParams.get('id');
@@ -62,7 +58,7 @@ const Page = () => {
     return <Alert severity="error">Invalid ID</Alert>;
   }
 
-  const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse<FormData>>({
+  const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse<Role>>({
     queryKey: ['edit', id],
     queryFn: async () => {
       const response = await services.view(Number(id));
@@ -97,9 +93,7 @@ const Page = () => {
     },
   });
 
-  const onSubmit = async ({ formData }: IChangeEvent<FormData>, e: any) => {
-    mutation.mutate({ id: Number(id), data: formData });
-  };
+  const onSubmit = ({ formData }: IChangeEvent<Role>, e: any) => mutation.mutate({ ...formData, id: Number(id) });
 
   return (
     <Container maxWidth="xl">
