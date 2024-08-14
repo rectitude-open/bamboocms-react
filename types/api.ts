@@ -1,8 +1,8 @@
 import type { AxiosRequestConfig } from 'axios';
 
-export interface ApiResponse {
+export interface ApiResponse<T = Record<string, unknown> | Record<string, unknown>[]> {
   success: boolean;
-  data: Record<string, unknown> | Record<string, unknown>[];
+  data: T;
   meta?: {
     total: number;
     current_page: number;
