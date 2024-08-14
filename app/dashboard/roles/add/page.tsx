@@ -42,11 +42,6 @@ const uiSchema = {
   },
 };
 
-const initialFormData: FormData = {
-  name: 'xxx',
-  description: 'yyyy',
-};
-
 const Form = withTheme<FormData>(Theme);
 
 const onError = (errors: any) => console.log(errors);
@@ -55,7 +50,7 @@ const Add = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
-  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [formData, setFormData] = useState<FormData>();
   const router = useRouter();
 
   const mutation = useMutation({
