@@ -54,9 +54,6 @@ const Page = () => {
   const router = useRouter();
 
   const id = searchParams.get('id');
-  if (!id) {
-    return <Alert severity="error">Invalid ID</Alert>;
-  }
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse<Role>>({
     queryKey: ['edit', id],
@@ -64,6 +61,7 @@ const Page = () => {
       const response = await services.view(Number(id));
       return response;
     },
+    enabled: !!id,
   });
 
   useEffect(() => {
@@ -71,10 +69,6 @@ const Page = () => {
       setFormData(data.data);
     }
   }, [data]);
-
-  if (isError) {
-    return <Alert severity="error">Error fetching data</Alert>;
-  }
 
   const mutation = useMutation({
     mutationFn: services.update,
@@ -95,6 +89,14 @@ const Page = () => {
 
   const onSubmit = ({ formData }: IChangeEvent<Role>, e: any) => mutation.mutate({ ...formData, id: Number(id) });
 
+  if (!id) {
+    return <Alert severity="error">Invalid ID</Alert>;
+  }
+
+  if (isError) {
+    return <Alert severity="error">Error fetching data</Alert>;
+  }
+
   return (
     <Container maxWidth="xl">
       <Box>
@@ -110,28 +112,34 @@ const Page = () => {
           Edit Role
         </Typography>
         <Paper variant="outlined" sx={{ p: 3, pt: 1 }}>
-          <Form
-            schema={schema}
-            uiSchema={uiSchema}
-            validator={validator}
-            onSubmit={onSubmit}
-            onError={onError}
-            disabled={loading}
-            formData={formData}
-            onChange={(e) => e.formData && setFormData(e.formData)}
-          >
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={disableSubmit}
-                startIcon={loading ? <CircularProgress size={20} /> : null}
-              >
-                {loading ? 'Loading...' : 'Submit'}
-              </Button>
+          {isLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <CircularProgress />
             </Box>
-          </Form>
+          ) : (
+            <Form
+              schema={schema}
+              uiSchema={uiSchema}
+              validator={validator}
+              onSubmit={onSubmit}
+              onError={onError}
+              disabled={loading}
+              formData={formData}
+              onChange={(e) => e.formData && setFormData(e.formData)}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={disableSubmit}
+                  startIcon={loading ? <CircularProgress size={20} /> : null}
+                >
+                  {loading ? 'Loading...' : 'Submit'}
+                </Button>
+              </Box>
+            </Form>
+          )}
         </Paper>
       </Box>
     </Container>
