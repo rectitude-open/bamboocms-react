@@ -20,7 +20,10 @@ import {
 import type { ApiResponse } from '@/types/api';
 
 import StyledMenu from './components/StyledMenu';
+import CustomDialog from './CustomDialog';
 import { TablePageProps } from './TablePage.types';
+
+type Role = Record<string, unknown>;
 
 const theme = createTheme({
   palette: {
@@ -52,6 +55,9 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<Role | undefined>();
+  const [isDialogLoading, setIsDialogLoading] = useState(false);
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
     queryKey: ['table-data', columnFilters, globalFilter, pagination.pageIndex, pagination.pageSize, sorting],
@@ -67,6 +73,27 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
       return response;
     },
   });
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleEditClick = async (id: number) => {
+    setIsDialogLoading(true);
+    setOpenDialog(true);
+    try {
+      const response = await services.view(id);
+      setSelectedRole(response.data);
+    } catch (error) {
+      console.error('Failed to fetch role', error);
+    } finally {
+      setIsDialogLoading(false);
+    }
+  };
+
+  const handleSubmit = (formData: Role) => {
+    console.log('formData', formData);
+  };
 
   return (
     <Card>
@@ -123,7 +150,7 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
               <IconButton
                 color="secondary"
                 onClick={() => {
-                  table.setEditingRow(row);
+                  handleEditClick(row.original.id);
                 }}
               >
                 <Edit />
@@ -200,6 +227,14 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
             );
           }}
           rowCount={data?.meta?.total ?? 0}
+        />
+        <CustomDialog
+          open={openDialog}
+          handleClose={handleCloseDialog}
+          initialData={selectedRole}
+          onSubmit={handleSubmit}
+          title={selectedRole ? 'Edit Role' : 'Add Role'}
+          isLoading={isDialogLoading}
         />
       </ThemeProvider>
     </Card>
