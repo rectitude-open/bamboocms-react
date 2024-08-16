@@ -11,3 +11,4 @@ export interface ApiResponse<T = Record<string, unknown> | Record<string, unknow
 }
 
 export type FetchFunction = (params: Record<string, unknown>, config?: AxiosRequestConfig) => Promise<any>;
+export type UpdateFunction = (payload: Record<string, unknown>) => Promise<any>;

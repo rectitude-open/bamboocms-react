@@ -43,7 +43,7 @@ interface Props {
   open: boolean;
   handleClose: () => void;
   initialData: Role | undefined;
-  onSubmit: (formData: Role) => void;
+  onSubmit: (formData: Role, id: number) => void;
   title: string;
   isLoading: boolean;
 }
@@ -76,7 +76,9 @@ const CustomDialog = ({ open, handleClose, initialData, onSubmit, title, isLoadi
             uiSchema={uiSchema}
             validator={validator}
             formData={initialData}
-            onSubmit={({ formData }: IChangeEvent<Role>) => onSubmit(formData)}
+            onSubmit={({ formData }: IChangeEvent<Role>) => {
+              onSubmit(formData, Number(initialData.id ?? 0));
+            }}
             omitExtraData
           />
         )}

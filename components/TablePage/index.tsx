@@ -4,7 +4,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, Button, Divider, IconButton, lighten, MenuItem, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
   MRT_ShowHideColumnsButton,
@@ -16,6 +16,7 @@ import {
   type MRT_PaginationState,
   type MRT_SortingState,
 } from 'material-react-table';
+import { useSnackbar } from 'notistack';
 
 import type { ApiResponse } from '@/types/api';
 
@@ -40,6 +41,7 @@ const theme = createTheme({
 });
 
 const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState(undefined);
   const [sorting, setSorting] = useState<MRT_SortingState>(defaultSorting);
@@ -58,6 +60,8 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | undefined>();
   const [isDialogLoading, setIsDialogLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [disableSubmit, setDisableSubmit] = useState(false);
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
     queryKey: ['table-data', columnFilters, globalFilter, pagination.pageIndex, pagination.pageSize, sorting],
@@ -91,7 +95,25 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
     }
   };
 
-  const handleSubmit = (formData: Role) => {
+  const mutation = useMutation({
+    mutationFn: services.update,
+    onMutate: () => {
+      setLoading(true);
+      setDisableSubmit(true);
+    },
+    onSuccess: (data) => {
+      setLoading(false);
+      enqueueSnackbar(data.message || 'Role updated successfully!', { variant: 'success' });
+      setDisableSubmit(false);
+    },
+    onError: () => {
+      setLoading(false);
+      setDisableSubmit(false);
+    },
+  });
+
+  const handleSubmit = (formData: Role, id: number) => {
+    mutation.mutate({ ...formData, id: Number(id) });
     console.log('formData', formData);
   };
 
