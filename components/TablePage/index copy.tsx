@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Delete, Edit, FileCopy, MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, Button, Divider, IconButton, lighten, MenuItem, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { RJSFSchema } from '@rjsf/utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
@@ -20,9 +19,9 @@ import {
 import { useSnackbar } from 'notistack';
 
 import type { ApiResponse } from '@/types/api';
-import FormDialog from '@/components/FormDialog/FormDialog';
 
 import StyledMenu from './components/StyledMenu';
+import CustomDialog from './CustomDialog';
 import { TablePageProps } from './TablePage.types';
 
 type Role = Record<string, unknown>;
@@ -41,34 +40,6 @@ const theme = createTheme({
   },
 });
 
-const dialogSchema: RJSFSchema = {
-  type: 'object',
-  required: ['name'],
-  properties: {
-    name: {
-      type: 'string',
-      maxLength: 255,
-    },
-    description: {
-      type: 'string',
-      maxLength: 255,
-    },
-  },
-};
-
-const dialogUiSchema = {
-  name: {
-    'ui:title': 'Name',
-  },
-  description: {
-    'ui:title': 'Description',
-    'ui:widget': 'textarea',
-  },
-  'ui:submitButtonOptions': {
-    norender: true,
-  },
-};
-
 const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
@@ -86,7 +57,6 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const [id, setId] = useState<number | undefined>();
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | undefined>();
   const [isDialogLoading, setIsDialogLoading] = useState(false);
@@ -113,9 +83,16 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
   };
 
   const handleEditClick = async (id: number) => {
-    setId(id);
+    setIsDialogLoading(true);
     setOpenDialog(true);
-    console.log('edit click');
+    try {
+      const response = await services.view(id);
+      setSelectedRole(response.data);
+    } catch (error) {
+      console.error('Failed to fetch role', error);
+    } finally {
+      setIsDialogLoading(false);
+    }
   };
 
   const mutation = useMutation({
@@ -139,23 +116,6 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
     mutation.mutate({ ...formData, id: Number(id) });
     console.log('formData', formData);
   };
-
-  const formDialog = useMemo(
-    () =>
-      openDialog && (
-        <FormDialog
-          open={openDialog}
-          handleClose={handleCloseDialog}
-          id={id!}
-          fetchService={services.view}
-          submitService={services.update}
-          schema={dialogSchema}
-          uiSchema={dialogUiSchema}
-          title="Edit Role"
-        />
-      ),
-    [openDialog, id]
-  );
 
   return (
     <Card>
@@ -290,15 +250,14 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
           }}
           rowCount={data?.meta?.total ?? 0}
         />
-        {formDialog}
-        {/* <CustomDialog
+        <CustomDialog
           open={openDialog}
           handleClose={handleCloseDialog}
           initialData={selectedRole}
           onSubmit={handleSubmit}
           title={selectedRole ? 'Edit Role' : 'Add Role'}
           isLoading={isDialogLoading}
-        /> */}
+        />
       </ThemeProvider>
     </Card>
   );

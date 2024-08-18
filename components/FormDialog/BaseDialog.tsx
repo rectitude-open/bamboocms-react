@@ -1,7 +1,7 @@
 import React, { createRef } from 'react';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from '@mui/material';
-import { Form, withTheme } from '@rjsf/core';
+import Form, { withTheme } from '@rjsf/core';
 import { Theme } from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
 
@@ -11,15 +11,28 @@ const formRef = createRef<Form>();
 interface BaseDialogProps {
   open: boolean;
   handleClose: () => void;
+  title: string;
   formData: any;
   schema: any;
   uiSchema: any;
-  onSubmit: (formData: any) => void;
   isLoading: boolean;
-  title: string;
+  onSubmit: (formData: any) => void;
+  submitLoading?: boolean;
 }
 
-const BaseDialog = ({ open, handleClose, formData, schema, uiSchema, onSubmit, isLoading, title }: BaseDialogProps) => {
+const BaseDialog = ({
+  open,
+  handleClose,
+  title,
+  formData,
+  schema,
+  uiSchema,
+  isLoading,
+  onSubmit,
+  submitLoading,
+}: BaseDialogProps) => {
+  console.log('render BaseDialog');
+  // console.log('formData in BaseDialog', formData);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle>
@@ -44,6 +57,7 @@ const BaseDialog = ({ open, handleClose, formData, schema, uiSchema, onSubmit, i
             validator={validator}
             formData={formData}
             onSubmit={({ formData }) => onSubmit(formData)}
+            disabled={submitLoading}
             omitExtraData
           />
         )}

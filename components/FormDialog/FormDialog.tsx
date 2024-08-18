@@ -9,7 +9,7 @@ import BaseDialog from './BaseDialog';
 interface FormDialogProps {
   open: boolean;
   handleClose: () => void;
-  id: number | undefined;
+  id: number;
   fetchService: (id: number) => Promise<any>;
   submitService: (data: any) => Promise<any>;
   schema: any;
@@ -31,21 +31,15 @@ const FormDialog = ({
   const queryClient = useQueryClient();
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  // const { data, isLoading, refetch } = useQuery(['form-data', id], () => fetchService(id), { enabled: !!id });
-
-  // useEffect(() => {
-  //   if (id) {
-  //     refetch();
-  //   }
-  // }, [id, refetch]);
+  console.log('render FormDialog');
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
     queryKey: ['view-form', id],
     queryFn: async () => {
-      const params = { id };
       const response = await fetchService(id);
       return response;
     },
+    enabled: !!id && open,
   });
 
   const mutation = useMutation({
@@ -55,29 +49,35 @@ const FormDialog = ({
     },
     onSuccess: (data) => {
       enqueueSnackbar(data.message || 'Submitted successfully!', { variant: 'success' });
-      queryClient.invalidateQueries(['form-data']);
+      queryClient.invalidateQueries({ queryKey: ['view-form'] });
+      setSubmitLoading(false);
       handleClose();
     },
     onError: (error) => {
-      enqueueSnackbar('Error submitting form', { variant: 'error' });
       console.error(error);
+      setSubmitLoading(false);
     },
   });
 
+  if (!open) {
+    return null;
+  }
+
   const handleSubmit = (formData: any) => {
-    mutation.mutate(id ? { ...formData, id } : formData);
+    mutation.mutate({ ...formData, id });
   };
 
   return (
     <BaseDialog
       open={open}
       handleClose={handleClose}
+      title={title}
       formData={data}
       schema={schema}
       uiSchema={uiSchema}
-      onSubmit={handleSubmit}
       isLoading={isLoading}
-      title={title}
+      onSubmit={handleSubmit}
+      submitLoading={submitLoading}
     />
   );
 };
