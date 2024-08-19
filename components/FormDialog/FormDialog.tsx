@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Backdrop, CircularProgress } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
@@ -8,6 +7,7 @@ import { ApiResponse } from '@/types/api';
 import BaseDialog from './BaseDialog';
 
 interface FormDialogProps {
+  title: string;
   open: boolean;
   handleClose: () => void;
   id: number;
@@ -15,10 +15,11 @@ interface FormDialogProps {
   submitService: (data: any) => Promise<any>;
   schema: any;
   uiSchema: any;
-  title: string;
+  onSubmitSuccess?: () => void;
 }
 
 const FormDialog = ({
+  title,
   open,
   handleClose,
   id,
@@ -26,14 +27,11 @@ const FormDialog = ({
   submitService,
   schema,
   uiSchema,
-  title,
+  onSubmitSuccess = () => {},
 }: FormDialogProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const [submitLoading, setSubmitLoading] = useState(false);
-
-  console.log('render FormDialog');
-
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
     queryKey: ['view-form', id],
     queryFn: async () => {
@@ -53,6 +51,7 @@ const FormDialog = ({
       queryClient.invalidateQueries({ queryKey: ['view-form'] });
       setSubmitLoading(false);
       handleClose();
+      onSubmitSuccess();
     },
     onError: (error) => {
       console.error(error);
@@ -60,13 +59,16 @@ const FormDialog = ({
     },
   });
 
+  const handleSubmit = useCallback(
+    (formData: any) => {
+      mutation.mutate({ ...formData, id });
+    },
+    [id, mutation]
+  );
+
   if (!open) {
     return null;
   }
-
-  const handleSubmit = (formData: any) => {
-    mutation.mutate({ ...formData, id });
-  };
 
   return (
     <>

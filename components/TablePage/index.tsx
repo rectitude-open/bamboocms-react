@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Delete, Edit, FileCopy, MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, Button, Divider, IconButton, lighten, MenuItem, Tooltip } from '@mui/material';
@@ -115,30 +115,13 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
   const handleEditClick = async (id: number) => {
     setId(id);
     setOpenDialog(true);
-    console.log('edit click');
   };
 
-  const mutation = useMutation({
-    mutationFn: services.update,
-    onMutate: () => {
-      setLoading(true);
-      setDisableSubmit(true);
-    },
-    onSuccess: (data) => {
-      setLoading(false);
-      enqueueSnackbar(data.message || 'Role updated successfully!', { variant: 'success' });
-      setDisableSubmit(false);
-    },
-    onError: () => {
-      setLoading(false);
-      setDisableSubmit(false);
-    },
-  });
+  const memoizedServices = useMemo(() => services, [services]);
 
-  const handleSubmit = (formData: Role, id: number) => {
-    mutation.mutate({ ...formData, id: Number(id) });
-    console.log('formData', formData);
-  };
+  const handleSubmitSuccess = useCallback(() => {
+    refetch();
+  }, [refetch]);
 
   const formDialog = useMemo(
     () =>
@@ -146,15 +129,16 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
         <FormDialog
           open={openDialog}
           handleClose={handleCloseDialog}
+          title="Edit Role"
           id={id!}
-          fetchService={services.view}
-          submitService={services.update}
+          fetchService={memoizedServices.view}
+          submitService={memoizedServices.update}
           schema={dialogSchema}
           uiSchema={dialogUiSchema}
-          title="Edit Role"
+          onSubmitSuccess={handleSubmitSuccess}
         />
       ),
-    [openDialog, id]
+    [openDialog, id, memoizedServices]
   );
 
   return (
@@ -291,14 +275,6 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
           rowCount={data?.meta?.total ?? 0}
         />
         {formDialog}
-        {/* <CustomDialog
-          open={openDialog}
-          handleClose={handleCloseDialog}
-          initialData={selectedRole}
-          onSubmit={handleSubmit}
-          title={selectedRole ? 'Edit Role' : 'Add Role'}
-          isLoading={isDialogLoading}
-        /> */}
       </ThemeProvider>
     </Card>
   );

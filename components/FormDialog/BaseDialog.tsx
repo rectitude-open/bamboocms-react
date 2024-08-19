@@ -32,43 +32,29 @@ interface BaseDialogProps {
   submitLoading?: boolean;
 }
 
-const BaseDialog = ({
-  open,
-  handleClose,
-  title,
-  formData,
-  schema,
-  uiSchema,
-  isLoading,
-  onSubmit,
-  submitLoading,
-}: BaseDialogProps) => {
-  console.log('render BaseDialog');
-  // console.log('formData in BaseDialog', formData);
-  return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-      {isLoading && (
-        <Box height={400} width="100%" display="flex" alignItems="center" justifyContent="center">
-          <CircularProgress />
-        </Box>
-      )}
-      {!isLoading && (
-        <>
-          <DialogTitle>
-            <Typography variant="h6">{title}</Typography>
-            <IconButton
-              aria-label="close"
-              onClick={handleClose}
-              sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </DialogTitle>
+const BaseDialog = React.memo(
+  ({ open, handleClose, title, formData, schema, uiSchema, isLoading, onSubmit, submitLoading }: BaseDialogProps) => {
+    return (
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        {isLoading && (
+          <Box height={400} width="100%" display="flex" alignItems="center" justifyContent="center">
+            <CircularProgress />
+          </Box>
+        )}
+        {!isLoading && (
+          <>
+            <DialogTitle>
+              <Typography variant="h6">{title}</Typography>
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
 
-          <DialogContent dividers>
-            {isLoading ? (
-              <Typography>Loading...</Typography>
-            ) : (
+            <DialogContent dividers>
               <ThemeForm
                 ref={formRef}
                 schema={schema}
@@ -79,21 +65,21 @@ const BaseDialog = ({
                 disabled={submitLoading}
                 omitExtraData
               />
-            )}
-          </DialogContent>
+            </DialogContent>
 
-          <DialogActions>
-            <Button onClick={handleClose} color="secondary">
-              Cancel
-            </Button>
-            <Button type="button" color="primary" onClick={() => formRef.current?.submit()}>
-              Save
-            </Button>
-          </DialogActions>
-        </>
-      )}
-    </Dialog>
-  );
-};
+            <DialogActions>
+              <Button onClick={handleClose} color="secondary">
+                Cancel
+              </Button>
+              <Button type="button" color="primary" onClick={() => formRef.current?.submit()}>
+                Save
+              </Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
+    );
+  }
+);
 
 export default BaseDialog;
