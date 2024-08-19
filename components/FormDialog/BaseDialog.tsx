@@ -1,4 +1,4 @@
-import React, { createRef } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { Close as CloseIcon } from '@mui/icons-material';
 import {
   Backdrop,
@@ -34,6 +34,12 @@ interface BaseDialogProps {
 
 const BaseDialog = React.memo(
   ({ open, handleClose, title, formData, schema, uiSchema, isLoading, onSubmit, submitLoading }: BaseDialogProps) => {
+    const [internalFormData, setInternalFormData] = useState(formData);
+
+    useEffect(() => {
+      setInternalFormData(formData);
+    }, [formData]);
+
     return (
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         {isLoading && (
@@ -60,7 +66,8 @@ const BaseDialog = React.memo(
                 schema={schema}
                 uiSchema={uiSchema}
                 validator={validator}
-                formData={formData}
+                formData={internalFormData}
+                onChange={({ formData }) => setInternalFormData(formData)}
                 onSubmit={({ formData }) => onSubmit(formData)}
                 disabled={submitLoading}
                 omitExtraData
