@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Backdrop, CircularProgress } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
@@ -68,17 +69,21 @@ const FormDialog = ({
   };
 
   return (
-    <BaseDialog
-      open={open}
-      handleClose={handleClose}
-      title={title}
-      formData={data}
-      schema={schema}
-      uiSchema={uiSchema}
-      isLoading={isLoading}
-      onSubmit={handleSubmit}
-      submitLoading={submitLoading}
-    />
+    <>
+      {!isError && (
+        <BaseDialog
+          open={open}
+          handleClose={handleClose}
+          title={title}
+          formData={data?.data ?? {}}
+          schema={schema}
+          uiSchema={uiSchema}
+          isLoading={isLoading}
+          onSubmit={handleSubmit}
+          submitLoading={submitLoading}
+        />
+      )}
+    </>
   );
 };
 
