@@ -11,7 +11,7 @@ interface FormDialogProps {
   open: boolean;
   handleClose: () => void;
   id: number;
-  fetchService: (id: number) => Promise<any>;
+  initializeService: (id: number) => Promise<any>;
   submitService: (data: any) => Promise<any>;
   schema: any;
   uiSchema: any;
@@ -23,7 +23,7 @@ const FormDialog = ({
   open,
   handleClose,
   id,
-  fetchService,
+  initializeService,
   submitService,
   schema,
   uiSchema,
@@ -35,7 +35,7 @@ const FormDialog = ({
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
     queryKey: ['view-form', id],
     queryFn: async () => {
-      const response = await fetchService(id);
+      const response = await initializeService(id);
       return response;
     },
     enabled: !!id && open,
@@ -80,7 +80,7 @@ const FormDialog = ({
           formData={data?.data ?? {}}
           schema={schema}
           uiSchema={uiSchema}
-          isLoading={isLoading}
+          isLoading={isLoading || isRefetching}
           onSubmit={handleSubmit}
           submitLoading={submitLoading}
         />

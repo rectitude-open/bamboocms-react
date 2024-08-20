@@ -17,15 +17,13 @@ import {
   type MRT_PaginationState,
   type MRT_SortingState,
 } from 'material-react-table';
-import { useSnackbar } from 'notistack';
 
 import type { ApiResponse } from '@/types/api';
+import { BaseEntity } from '@/types/BaseEntity';
 import FormDialog from '@/components/FormDialog/FormDialog';
 
 import StyledMenu from './components/StyledMenu';
 import { TablePageProps } from './TablePage.types';
-
-type Role = Record<string, unknown>;
 
 const theme = createTheme({
   palette: {
@@ -69,8 +67,7 @@ const dialogUiSchema = {
   },
 };
 
-const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) => {
-  const { enqueueSnackbar } = useSnackbar();
+const TablePage = <T extends BaseEntity>({ services, columns, defaultSorting = [] }: TablePageProps<T>) => {
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState(undefined);
   const [sorting, setSorting] = useState<MRT_SortingState>(defaultSorting);
@@ -88,10 +85,8 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
   };
   const [id, setId] = useState<number | undefined>();
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<Role | undefined>();
-  const [isDialogLoading, setIsDialogLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [disableSubmit, setDisableSubmit] = useState(false);
+
+  const memoizedServices = useMemo(() => services, [services]);
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
     queryKey: ['table-data', columnFilters, globalFilter, pagination.pageIndex, pagination.pageSize, sorting],
@@ -103,7 +98,7 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
         filters: JSON.stringify(columnFilters ?? []),
         sorting: JSON.stringify(sorting ?? []),
       };
-      const response = await services.fetch(params);
+      const response = await memoizedServices.fetch(params);
       return response;
     },
   });
@@ -117,8 +112,6 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
     setOpenDialog(true);
   };
 
-  const memoizedServices = useMemo(() => services, [services]);
-
   const handleSubmitSuccess = useCallback(() => {
     refetch();
   }, [refetch]);
@@ -131,8 +124,8 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
           handleClose={handleCloseDialog}
           title="Edit Role"
           id={id!}
-          fetchService={memoizedServices.view}
-          submitService={memoizedServices.update}
+          initializeService={memoizedServices.view}
+          submitService={memoizedServices.submit}
           schema={dialogSchema}
           uiSchema={dialogUiSchema}
           onSubmitSuccess={handleSubmitSuccess}
@@ -196,7 +189,7 @@ const TablePage = ({ services, columns, defaultSorting = [] }: TablePageProps) =
               <IconButton
                 color="secondary"
                 onClick={() => {
-                  handleEditClick(row.original.id);
+                  row?.original?.id && handleEditClick(Number(row.original.id));
                 }}
               >
                 <Edit />

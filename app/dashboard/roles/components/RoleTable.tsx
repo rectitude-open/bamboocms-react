@@ -5,9 +5,11 @@ import { formatDate } from '@/utils/dateUtils';
 import { Box, Card } from '@mui/material';
 import { type MRT_ColumnDef } from 'material-react-table';
 
+import { UpdateService } from '@/types/api';
 import TablePage from '@/components/TablePage';
 
 import * as services from '../services';
+import { Role } from '../types';
 
 const RoleTable = () => {
   const columns = useMemo<MRT_ColumnDef<Record<string, unknown>>[]>(
@@ -63,7 +65,15 @@ const RoleTable = () => {
 
   return (
     <Card>
-      <TablePage services={services} columns={columns} defaultSorting={defaultSorting} />
+      <TablePage<Role>
+        services={{
+          fetch: services.fetch,
+          submit: services.update,
+          view: services.view,
+        }}
+        columns={columns}
+        defaultSorting={defaultSorting}
+      />
     </Card>
   );
 };
