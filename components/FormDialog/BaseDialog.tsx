@@ -40,8 +40,14 @@ const BaseDialog = React.memo(
       setInternalFormData(formData);
     }, [formData]);
 
+    const handleDialogCLose = () => {
+      if (!submitLoading) {
+        handleClose();
+      }
+    };
+
     return (
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+      <Dialog open={open} onClose={handleDialogCLose} fullWidth maxWidth="sm" disableEscapeKeyDown>
         {isLoading && (
           <Box height={400} width="100%" display="flex" alignItems="center" justifyContent="center">
             <CircularProgress />
@@ -55,6 +61,7 @@ const BaseDialog = React.memo(
                 aria-label="close"
                 onClick={handleClose}
                 sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
+                disabled={submitLoading}
               >
                 <CloseIcon />
               </IconButton>
@@ -75,11 +82,17 @@ const BaseDialog = React.memo(
             </DialogContent>
 
             <DialogActions>
-              <Button onClick={handleClose} color="secondary">
+              <Button onClick={handleClose} color="secondary" disabled={submitLoading}>
                 Cancel
               </Button>
-              <Button type="button" color="primary" onClick={() => formRef.current?.submit()}>
-                Save
+              <Button
+                type="button"
+                color="primary"
+                onClick={() => formRef.current?.submit()}
+                disabled={submitLoading}
+                startIcon={submitLoading ? <CircularProgress size={16} /> : null}
+              >
+                Submit
               </Button>
             </DialogActions>
           </>
