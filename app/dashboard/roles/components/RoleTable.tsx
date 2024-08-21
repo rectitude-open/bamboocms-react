@@ -5,7 +5,6 @@ import { formatDate } from '@/utils/dateUtils';
 import { Box, Card } from '@mui/material';
 import { type MRT_ColumnDef } from 'material-react-table';
 
-import { UpdateService } from '@/types/api';
 import TablePage from '@/components/TablePage';
 
 import * as services from '../services';
@@ -63,14 +62,58 @@ const RoleTable = () => {
     },
   ];
 
+  const schema = {
+    type: 'object',
+    required: ['name'],
+    properties: {
+      name: {
+        type: 'string',
+        maxLength: 255,
+      },
+      description: {
+        type: 'string',
+        maxLength: 255,
+      },
+    },
+  };
+
+  const uiSchema = {
+    name: {
+      'ui:title': 'Name',
+    },
+    description: {
+      'ui:title': 'Description',
+      'ui:widget': 'textarea',
+    },
+    'ui:submitButtonOptions': {
+      norender: true,
+    },
+  };
+
+  const tableActionConfig = {
+    add: {
+      title: 'Add Role',
+      initService: null,
+      submitService: services.create,
+      formType: 'dialog',
+      schema,
+      uiSchema,
+    },
+    edit: {
+      title: 'Update Role',
+      initService: services.view,
+      submitService: services.update,
+      formType: 'dialog',
+      schema,
+      uiSchema,
+    },
+  };
+
   return (
     <Card>
       <TablePage<Role>
-        services={{
-          fetch: services.fetch,
-          submit: services.update,
-          view: services.view,
-        }}
+        actionConfig={tableActionConfig}
+        tableService={services.fetch}
         columns={columns}
         defaultSorting={defaultSorting}
       />

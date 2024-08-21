@@ -39,35 +39,12 @@ const theme = createTheme({
   },
 });
 
-const dialogSchema: RJSFSchema = {
-  type: 'object',
-  required: ['name'],
-  properties: {
-    name: {
-      type: 'string',
-      maxLength: 255,
-    },
-    description: {
-      type: 'string',
-      maxLength: 255,
-    },
-  },
-};
-
-const dialogUiSchema = {
-  name: {
-    'ui:title': 'Name',
-  },
-  description: {
-    'ui:title': 'Description',
-    'ui:widget': 'textarea',
-  },
-  'ui:submitButtonOptions': {
-    norender: true,
-  },
-};
-
-const TablePage = <T extends BaseEntity>({ services, columns, defaultSorting = [] }: TablePageProps<T>) => {
+const TablePage = <T extends BaseEntity>({
+  columns,
+  actionConfig,
+  defaultSorting = [],
+  tableService,
+}: TablePageProps<T>) => {
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState(undefined);
   const [sorting, setSorting] = useState<MRT_SortingState>(defaultSorting);
@@ -85,8 +62,11 @@ const TablePage = <T extends BaseEntity>({ services, columns, defaultSorting = [
   };
   const [id, setId] = useState<number | undefined>();
   const [openDialog, setOpenDialog] = useState(false);
-
-  const memoizedServices = useMemo(() => services, [services]);
+  const [dialogInitService, setDialogInitService] = useState();
+  const [dialogSubmitService, setDialogSubmitService] = useState();
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogSchema, setDialogSchema] = useState<RJSFSchema>();
+  const [dialogUiSchema, setDialogUiSchema] = useState();
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
     queryKey: ['table-data', columnFilters, globalFilter, pagination.pageIndex, pagination.pageSize, sorting],
@@ -98,18 +78,13 @@ const TablePage = <T extends BaseEntity>({ services, columns, defaultSorting = [
         filters: JSON.stringify(columnFilters ?? []),
         sorting: JSON.stringify(sorting ?? []),
       };
-      const response = await memoizedServices.fetch(params);
+      const response = await tableService(params);
       return response;
     },
   });
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-  };
-
-  const handleEditClick = async (id: number) => {
-    setId(id);
-    setOpenDialog(true);
   };
 
   const handleSubmitSuccess = useCallback(() => {
@@ -122,16 +97,49 @@ const TablePage = <T extends BaseEntity>({ services, columns, defaultSorting = [
         <FormDialog
           open={openDialog}
           handleClose={handleCloseDialog}
-          title="Edit Role"
+          title={dialogTitle}
           id={id!}
-          initializeService={memoizedServices.view}
-          submitService={memoizedServices.submit}
+          initService={dialogInitService}
+          submitService={dialogSubmitService}
           schema={dialogSchema}
           uiSchema={dialogUiSchema}
           onSubmitSuccess={handleSubmitSuccess}
         />
       ),
-    [openDialog, id, memoizedServices]
+    [
+      openDialog,
+      id,
+      dialogTitle,
+      dialogInitService,
+      dialogSubmitService,
+      handleSubmitSuccess,
+      dialogSchema,
+      dialogUiSchema,
+    ]
+  );
+
+  const editAction = ({ row, table }) => (
+    <IconButton
+      color="secondary"
+      onClick={() => {
+        if (row?.original?.id) {
+          const formType = actionConfig?.edit?.formType ?? 'page';
+          switch (formType) {
+            case 'dialog': {
+              setDialogTitle(actionConfig.edit.title ?? 'Edit');
+              setDialogInitService(() => (id) => actionConfig?.edit?.initService(id));
+              setDialogSubmitService(() => (data) => actionConfig?.edit?.submitService(data));
+              setDialogSchema(actionConfig.edit.schema);
+              setDialogUiSchema(actionConfig.edit.uiSchema);
+              setId(row.original.id);
+              setOpenDialog(true);
+            }
+          }
+        }
+      }}
+    >
+      <Edit />
+    </IconButton>
   );
 
   return (
@@ -184,16 +192,9 @@ const TablePage = <T extends BaseEntity>({ services, columns, defaultSorting = [
           )}
           enableRowActions
           positionActionsColumn="last"
-          renderRowActions={({ row, table }) => (
+          renderRowActions={(rowProps) => (
             <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-              <IconButton
-                color="secondary"
-                onClick={() => {
-                  row?.original?.id && handleEditClick(Number(row.original.id));
-                }}
-              >
-                <Edit />
-              </IconButton>
+              {editAction(rowProps)}
               <IconButton
                 aria-label="more"
                 id="more-button"

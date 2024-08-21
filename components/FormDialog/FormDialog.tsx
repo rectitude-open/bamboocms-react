@@ -11,8 +11,8 @@ interface FormDialogProps {
   open: boolean;
   handleClose: () => void;
   id: number;
-  initializeService: (id: number) => Promise<any>;
-  submitService: (data: any) => Promise<any>;
+  initService?: (id: number) => Promise<any>;
+  submitService?: (data: any) => Promise<any>;
   schema: any;
   uiSchema: any;
   onSubmitSuccess?: () => void;
@@ -23,7 +23,7 @@ const FormDialog = ({
   open,
   handleClose,
   id,
-  initializeService,
+  initService,
   submitService,
   schema,
   uiSchema,
@@ -35,10 +35,10 @@ const FormDialog = ({
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
     queryKey: ['view-form', id],
     queryFn: async () => {
-      const response = await initializeService(id);
+      const response = await initService!(Number(id));
       return response;
     },
-    enabled: !!id && open,
+    enabled: !!initService && !!id && open,
   });
 
   const mutation = useMutation({
@@ -61,6 +61,8 @@ const FormDialog = ({
 
   const handleSubmit = useCallback(
     (formData: any) => {
+      console.log('handleSubmit', formData);
+
       mutation.mutate({ ...formData, id });
     },
     [id, mutation]
