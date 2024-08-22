@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Delete, Edit, FileCopy, MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, Button, Divider, IconButton, lighten, MenuItem, Tooltip } from '@mui/material';
@@ -67,6 +68,7 @@ const TablePage = <T extends BaseEntity>({
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogSchema, setDialogSchema] = useState<RJSFSchema>();
   const [dialogUiSchema, setDialogUiSchema] = useState();
+  const router = useRouter();
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
     queryKey: ['table-data', columnFilters, globalFilter, pagination.pageIndex, pagination.pageSize, sorting],
@@ -133,6 +135,10 @@ const TablePage = <T extends BaseEntity>({
               setDialogUiSchema(actionConfig.edit.uiSchema);
               setId(row.original.id);
               setOpenDialog(true);
+            }
+            case 'page': {
+              const queryString = actionConfig.edit.params.map((param) => `${param}=${row.original[param]}`).join('&');
+              router.push(`${actionConfig.edit.url}?${queryString}`);
             }
           }
         }

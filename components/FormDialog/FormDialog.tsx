@@ -61,8 +61,6 @@ const FormDialog = ({
 
   const handleSubmit = useCallback(
     (formData: any) => {
-      console.log('handleSubmit', formData);
-
       mutation.mutate({ ...formData, id });
     },
     [id, mutation]
