@@ -99,19 +99,19 @@ const RoleTable = () => {
       schema,
       uiSchema,
     },
-    edit: {
-      formType: 'page',
-      url: '/dashboard/roles/edit',
-      params: ['id'],
-    },
     // edit: {
-    //   title: 'Update Role',
-    //   initService: services.view,
-    //   submitService: services.update,
-    //   formType: 'dialog',
-    //   schema,
-    //   uiSchema,
+    //   formType: 'page',
+    //   url: '/dashboard/roles/edit',
+    //   params: ['id'],
     // },
+    edit: {
+      title: 'Update Role',
+      initService: services.view,
+      submitService: services.update,
+      formType: 'dialog',
+      schema,
+      uiSchema,
+    },
   };
 
   return (

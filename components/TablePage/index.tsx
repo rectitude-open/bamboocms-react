@@ -9,11 +9,10 @@ import { RJSFSchema } from '@rjsf/utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
+  MRT_Row,
   MRT_ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton,
-  MRT_ToggleFiltersButton,
   MRT_ToggleFullScreenButton,
-  MRT_ToggleGlobalFilterButton,
   type MRT_ColumnFiltersState,
   type MRT_PaginationState,
   type MRT_SortingState,
@@ -63,11 +62,10 @@ const TablePage = <T extends BaseEntity>({
   };
   const [id, setId] = useState<number | undefined>();
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogInitService, setDialogInitService] = useState();
-  const [dialogSubmitService, setDialogSubmitService] = useState();
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogSchema, setDialogSchema] = useState<RJSFSchema>();
   const [dialogUiSchema, setDialogUiSchema] = useState();
+  const [dialogServices, setDialogServices] = useState({});
   const router = useRouter();
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
@@ -101,41 +99,35 @@ const TablePage = <T extends BaseEntity>({
           handleClose={handleCloseDialog}
           title={dialogTitle}
           id={id!}
-          initService={dialogInitService}
-          submitService={dialogSubmitService}
+          services={dialogServices}
           schema={dialogSchema}
           uiSchema={dialogUiSchema}
           onSubmitSuccess={handleSubmitSuccess}
         />
       ),
-    [
-      openDialog,
-      id,
-      dialogTitle,
-      dialogInitService,
-      dialogSubmitService,
-      handleSubmitSuccess,
-      dialogSchema,
-      dialogUiSchema,
-    ]
+    [openDialog, id, dialogTitle, dialogServices, handleSubmitSuccess, dialogSchema, dialogUiSchema]
   );
 
-  const editAction = ({ row, table }) => (
+  const editAction = (row: MRT_Row<T>) => (
     <IconButton
       color="secondary"
       onClick={() => {
         if (row?.original?.id) {
           const formType = actionConfig?.edit?.formType ?? 'page';
           switch (formType) {
-            case 'dialog': {
-              setDialogTitle(actionConfig.edit.title ?? 'Edit');
-              setDialogInitService(() => (id) => actionConfig?.edit?.initService(id));
-              setDialogSubmitService(() => (data) => actionConfig?.edit?.submitService(data));
-              setDialogSchema(actionConfig.edit.schema);
-              setDialogUiSchema(actionConfig.edit.uiSchema);
-              setId(row.original.id);
-              setOpenDialog(true);
-            }
+            case 'dialog':
+              {
+                setDialogTitle(actionConfig.edit.title ?? 'Edit');
+                setDialogServices({
+                  initService: actionConfig?.edit?.initService,
+                  submitService: actionConfig?.edit?.submitService,
+                });
+                setDialogSchema(actionConfig.edit.schema);
+                setDialogUiSchema(actionConfig.edit.uiSchema);
+                setId(row.original.id);
+                setOpenDialog(true);
+              }
+              break;
             case 'page': {
               const queryString = actionConfig.edit.params.map((param) => `${param}=${row.original[param]}`).join('&');
               router.push(`${actionConfig.edit.url}?${queryString}`);
@@ -198,9 +190,9 @@ const TablePage = <T extends BaseEntity>({
           )}
           enableRowActions
           positionActionsColumn="last"
-          renderRowActions={(rowProps) => (
+          renderRowActions={({ row }) => (
             <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-              {editAction(rowProps)}
+              {editAction(row)}
               <IconButton
                 aria-label="more"
                 id="more-button"

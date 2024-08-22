@@ -11,8 +11,10 @@ interface FormDialogProps {
   open: boolean;
   handleClose: () => void;
   id: number;
-  initService?: (id: number) => Promise<any>;
-  submitService?: (data: any) => Promise<any>;
+  services: {
+    initService?: (data: any) => Promise<any>;
+    submitService?: (data: any) => Promise<any>;
+  };
   schema: any;
   uiSchema: any;
   onSubmitSuccess?: () => void;
@@ -23,8 +25,7 @@ const FormDialog = ({
   open,
   handleClose,
   id,
-  initService,
-  submitService,
+  services: { initService, submitService },
   schema,
   uiSchema,
   onSubmitSuccess = () => {},

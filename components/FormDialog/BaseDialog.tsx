@@ -56,7 +56,7 @@ const BaseDialog = React.memo(
         {!isLoading && (
           <>
             <DialogTitle>
-              <Typography variant="h6">{title}</Typography>
+              <Typography fontSize="1.2rem">{title}</Typography>
               <IconButton
                 aria-label="close"
                 onClick={handleClose}
