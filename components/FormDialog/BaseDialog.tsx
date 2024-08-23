@@ -16,6 +16,7 @@ import {
 import Form, { withTheme } from '@rjsf/core';
 import { Theme } from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
+import { nanoid } from 'nanoid';
 
 const ThemeForm = withTheme(Theme);
 const formRef = createRef<Form>();
@@ -35,19 +36,37 @@ interface BaseDialogProps {
 const BaseDialog = React.memo(
   ({ open, handleClose, title, formData, schema, uiSchema, isLoading, onSubmit, submitLoading }: BaseDialogProps) => {
     const [internalFormData, setInternalFormData] = useState(formData);
+    const [dialogKey] = useState(nanoid());
 
     useEffect(() => {
-      setInternalFormData(formData);
-    }, [formData]);
+      if (open && formData) {
+        setInternalFormData(formData);
+      }
+    }, [formData, open]);
 
-    const handleDialogCLose = () => {
+    const resetFormData = () => {
+      setInternalFormData({});
+    };
+
+    useEffect(() => {
+      if (!open) {
+        resetFormData();
+      }
+      const ref = formRef.current;
+      return () => {
+        ref?.reset();
+      };
+    }, [open]);
+
+    function handleDialogClose() {
+      resetFormData();
       if (!submitLoading) {
         handleClose();
       }
-    };
+    }
 
     return (
-      <Dialog open={open} onClose={handleDialogCLose} fullWidth maxWidth="sm" disableEscapeKeyDown>
+      <Dialog key={dialogKey} open={open} onClose={handleDialogClose} fullWidth maxWidth="sm" disableEscapeKeyDown>
         {isLoading && (
           <Box height={400} width="100%" display="flex" alignItems="center" justifyContent="center">
             <CircularProgress />
@@ -59,7 +78,7 @@ const BaseDialog = React.memo(
               <Typography fontSize="1.2rem">{title}</Typography>
               <IconButton
                 aria-label="close"
-                onClick={handleClose}
+                onClick={handleDialogClose}
                 sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
                 disabled={submitLoading}
               >
@@ -82,7 +101,7 @@ const BaseDialog = React.memo(
             </DialogContent>
 
             <DialogActions>
-              <Button onClick={handleClose} color="secondary" disabled={submitLoading}>
+              <Button onClick={handleDialogClose} color="secondary" disabled={submitLoading}>
                 Cancel
               </Button>
               <Button

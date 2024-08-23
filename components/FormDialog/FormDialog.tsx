@@ -33,7 +33,9 @@ const FormDialog = ({
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const [submitLoading, setSubmitLoading] = useState(false);
-  const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
+  const [initialFormData, setInitialFormData] = useState<any>({});
+
+  const { data, isError, isLoading, isRefetching } = useQuery<ApiResponse>({
     queryKey: ['view-form', id],
     queryFn: async () => {
       const response = await initService!(Number(id));
@@ -60,6 +62,23 @@ const FormDialog = ({
     },
   });
 
+  useEffect(() => {
+    // cannot add open to the dependency array, it will cause fail to clear form data
+    if (data?.data) {
+      setInitialFormData(data.data);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (!open) {
+      setInitialFormData({});
+    }
+  }, [open]);
+
+  const handleDialogClose = () => {
+    handleClose();
+  };
+
   const handleSubmit = useCallback(
     (formData: any) => {
       mutation.mutate({ ...formData, id });
@@ -67,18 +86,14 @@ const FormDialog = ({
     [id, mutation]
   );
 
-  if (!open) {
-    return null;
-  }
-
   return (
     <>
       {!isError && (
         <BaseDialog
           open={open}
-          handleClose={handleClose}
+          handleClose={handleDialogClose}
           title={title}
-          formData={data?.data ?? {}}
+          formData={initialFormData}
           schema={schema}
           uiSchema={uiSchema}
           isLoading={isLoading || isRefetching}
