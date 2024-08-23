@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Delete, Edit, FileCopy, MoreHoriz } from '@mui/icons-material';
+import { Add, Delete, Edit, FileCopy, MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, Button, Divider, IconButton, lighten, MenuItem, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
@@ -92,53 +92,98 @@ const TablePage = <T extends BaseEntity>({
   }, [refetch]);
 
   const formDialog = useMemo(
-    () =>
-      openDialog && (
-        <FormDialog
-          open={openDialog}
-          handleClose={handleCloseDialog}
-          title={dialogTitle}
-          id={id!}
-          services={dialogServices}
-          schema={dialogSchema}
-          uiSchema={dialogUiSchema}
-          onSubmitSuccess={handleSubmitSuccess}
-        />
-      ),
+    () => (
+      <FormDialog
+        open={openDialog}
+        handleClose={handleCloseDialog}
+        title={dialogTitle}
+        id={id!}
+        services={dialogServices}
+        schema={dialogSchema}
+        uiSchema={dialogUiSchema}
+        onSubmitSuccess={handleSubmitSuccess}
+      />
+    ),
     [openDialog, id, dialogTitle, dialogServices, handleSubmitSuccess, dialogSchema, dialogUiSchema]
   );
 
-  const editAction = (row: MRT_Row<T>) => (
-    <IconButton
-      color="secondary"
-      onClick={() => {
-        if (row?.original?.id) {
-          const formType = actionConfig?.edit?.formType ?? 'page';
+  const editAction = (row: MRT_Row<T>) => {
+    if (!row?.original?.id || !actionConfig?.edit) return;
+
+    const editConfig = actionConfig?.edit;
+
+    return (
+      <IconButton
+        color="secondary"
+        onClick={() => {
+          const formType = editConfig.formType ?? 'page';
           switch (formType) {
             case 'dialog':
               {
-                setDialogTitle(actionConfig.edit.title ?? 'Edit');
+                setDialogTitle(editConfig?.title ?? 'Edit');
                 setDialogServices({
-                  initService: actionConfig?.edit?.initService,
-                  submitService: actionConfig?.edit?.submitService,
+                  initService: editConfig.initService,
+                  submitService: editConfig.submitService,
                 });
-                setDialogSchema(actionConfig.edit.schema);
-                setDialogUiSchema(actionConfig.edit.uiSchema);
+                setDialogSchema(editConfig?.schema);
+                setDialogUiSchema(editConfig?.uiSchema);
                 setId(row.original.id);
                 setOpenDialog(true);
               }
               break;
-            case 'page': {
-              const queryString = actionConfig.edit.params.map((param) => `${param}=${row.original[param]}`).join('&');
-              router.push(`${actionConfig.edit.url}?${queryString}`);
-            }
+            case 'page':
+              {
+                const queryString = editConfig?.params.map((param) => `${param}=${row.original[param]}`).join('&');
+                router.push(`${editConfig?.url}?${queryString}`);
+              }
+              break;
           }
-        }
-      }}
-    >
-      <Edit />
-    </IconButton>
-  );
+        }}
+      >
+        <Edit />
+      </IconButton>
+    );
+  };
+
+  const addAction = () => {
+    if (!actionConfig?.add) return;
+
+    const addConfig = actionConfig?.add;
+
+    return (
+      <Button
+        color="primary"
+        variant="contained"
+        startIcon={<Add />}
+        sx={{ ml: 2 }}
+        onClick={() => {
+          const formType = addConfig?.formType ?? 'page';
+          switch (formType) {
+            case 'dialog':
+              {
+                setDialogTitle(addConfig?.title ?? 'Edit');
+                setDialogServices({
+                  initService: addConfig.initService,
+                  submitService: addConfig.submitService,
+                });
+                setDialogSchema(addConfig?.schema);
+                setDialogUiSchema(addConfig?.uiSchema);
+                setOpenDialog(true);
+              }
+              break;
+            case 'page':
+              {
+                const queryString = addConfig?.params.map((param) => `${param}=${row.original[param]}`).join('&');
+                router.push(`${addConfig?.url}?${queryString}`);
+              }
+              break;
+          }
+        }}
+      >
+        Add
+      </Button>
+    );
+  };
 
   return (
     <Card>
@@ -186,6 +231,7 @@ const TablePage = <T extends BaseEntity>({
                   <RefreshIcon />
                 </IconButton>
               </Tooltip>
+              {addAction()}
             </>
           )}
           enableRowActions
