@@ -107,6 +107,31 @@ const TablePage = <T extends BaseEntity>({
     [openDialog, id, dialogTitle, dialogServices, handleSubmitSuccess, dialogSchema, dialogUiSchema]
   );
 
+  const handleAction = (config: any, record: any = {}) => {
+    const formType = config.formType ?? 'page';
+    switch (formType) {
+      case 'dialog':
+        {
+          setDialogTitle(config?.title ?? 'Edit');
+          setDialogServices({
+            initService: config.initService,
+            submitService: config.submitService,
+          });
+          setDialogSchema(config?.schema);
+          setDialogUiSchema(config?.uiSchema);
+          setId(record?.id ?? 0);
+          setOpenDialog(true);
+        }
+        break;
+      case 'page':
+        {
+          const queryString = config?.params.map((param) => `${param}=${row.original[param]}`).join('&');
+          router.push(`${config?.url}?${queryString}`);
+        }
+        break;
+    }
+  };
+
   const editAction = (row: MRT_Row<T>) => {
     if (!row?.original?.id || !actionConfig?.edit) return;
 
@@ -116,28 +141,7 @@ const TablePage = <T extends BaseEntity>({
       <IconButton
         color="secondary"
         onClick={() => {
-          const formType = editConfig.formType ?? 'page';
-          switch (formType) {
-            case 'dialog':
-              {
-                setDialogTitle(editConfig?.title ?? 'Edit');
-                setDialogServices({
-                  initService: editConfig.initService,
-                  submitService: editConfig.submitService,
-                });
-                setDialogSchema(editConfig?.schema);
-                setDialogUiSchema(editConfig?.uiSchema);
-                setId(row.original.id);
-                setOpenDialog(true);
-              }
-              break;
-            case 'page':
-              {
-                const queryString = editConfig?.params.map((param) => `${param}=${row.original[param]}`).join('&');
-                router.push(`${editConfig?.url}?${queryString}`);
-              }
-              break;
-          }
+          handleAction(editConfig, row.original);
         }}
       >
         <Edit />
@@ -157,27 +161,7 @@ const TablePage = <T extends BaseEntity>({
         startIcon={<Add />}
         sx={{ ml: 2 }}
         onClick={() => {
-          const formType = addConfig?.formType ?? 'page';
-          switch (formType) {
-            case 'dialog':
-              {
-                setDialogTitle(addConfig?.title ?? 'Edit');
-                setDialogServices({
-                  initService: addConfig.initService,
-                  submitService: addConfig.submitService,
-                });
-                setDialogSchema(addConfig?.schema);
-                setDialogUiSchema(addConfig?.uiSchema);
-                setOpenDialog(true);
-              }
-              break;
-            case 'page':
-              {
-                const queryString = addConfig?.params.map((param) => `${param}=${row.original[param]}`).join('&');
-                router.push(`${addConfig?.url}?${queryString}`);
-              }
-              break;
-          }
+          handleAction(addConfig);
         }}
       >
         Add
