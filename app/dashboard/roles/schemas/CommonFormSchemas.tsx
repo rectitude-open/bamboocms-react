@@ -1,4 +1,4 @@
-import { RJSFSchema } from '@rjsf/utils';
+import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 
 export const commonSchema: RJSFSchema = {
   type: 'object',
@@ -15,7 +15,7 @@ export const commonSchema: RJSFSchema = {
   },
 };
 
-export const commonUiSchema = {
+export const commonUiSchema: UiSchema = {
   name: {
     'ui:title': 'Name',
   },

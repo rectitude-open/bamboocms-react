@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
@@ -6,7 +7,7 @@ import { ApiResponse } from '@/types/api';
 
 import BaseDialog from './BaseDialog';
 
-interface FormDialogProps {
+interface FormDialogProps<T> {
   title: string;
   open: boolean;
   handleClose: () => void;
@@ -15,12 +16,12 @@ interface FormDialogProps {
     initService?: (data: any) => Promise<any>;
     submitService?: (data: any) => Promise<any>;
   };
-  schema: any;
-  uiSchema: any;
+  schema: RJSFSchema;
+  uiSchema: UiSchema;
   onSubmitSuccess?: () => void;
 }
 
-const FormDialog = ({
+const FormDialog = <T extends Record<string, unknown>>({
   title,
   open,
   handleClose,
@@ -29,7 +30,7 @@ const FormDialog = ({
   schema,
   uiSchema,
   onSubmitSuccess = () => {},
-}: FormDialogProps) => {
+}: FormDialogProps<T>) => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -89,7 +90,7 @@ const FormDialog = ({
   return (
     <>
       {!isError && (
-        <BaseDialog
+        <BaseDialog<T>
           open={open}
           handleClose={handleDialogClose}
           title={title}
