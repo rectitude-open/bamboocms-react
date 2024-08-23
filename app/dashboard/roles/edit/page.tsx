@@ -13,33 +13,12 @@ import { useSnackbar } from 'notistack';
 
 import type { ApiResponse } from '@/types/api';
 
+import { commonSchema, commonUiSchema } from '../schemas/CommonFormSchemas';
 import * as services from '../services';
 import { Role } from '../types';
 
-const schema: RJSFSchema = {
-  type: 'object',
-  required: ['name'],
-  properties: {
-    name: {
-      type: 'string',
-      maxLength: 255,
-    },
-    description: {
-      type: 'string',
-      maxLength: 255,
-    },
-  },
-};
-
-const uiSchema = {
-  name: {
-    'ui:title': 'Name',
-  },
-  description: {
-    'ui:title': 'Description',
-    'ui:widget': 'textarea',
-  },
-};
+const schema: RJSFSchema = commonSchema;
+const uiSchema = commonUiSchema;
 
 const Form = withTheme<Role>(Theme);
 

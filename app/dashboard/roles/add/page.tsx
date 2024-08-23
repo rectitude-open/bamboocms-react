@@ -11,35 +11,15 @@ import validator from '@rjsf/validator-ajv8';
 import { useMutation } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
+import { commonSchema, commonUiSchema } from '../schemas/CommonFormSchemas';
 import { create } from '../services';
+
+const schema: RJSFSchema = commonSchema;
+const uiSchema = commonUiSchema;
 
 type FormData = {
   name: string;
   description: string;
-};
-
-const schema: RJSFSchema = {
-  type: 'object',
-  required: ['name'],
-  properties: {
-    name: {
-      type: 'string',
-      maxLength: 255,
-    },
-    description: {
-      type: 'string',
-      maxLength: 255,
-    },
-  },
-};
-const uiSchema = {
-  name: {
-    'ui:title': 'Name',
-  },
-  description: {
-    'ui:title': 'Description',
-    'ui:widget': 'textarea',
-  },
 };
 
 const Form = withTheme<FormData>(Theme);

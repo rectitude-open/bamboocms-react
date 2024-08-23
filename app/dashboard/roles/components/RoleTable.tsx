@@ -3,12 +3,17 @@
 import React, { useMemo } from 'react';
 import { formatDate } from '@/utils/dateUtils';
 import { Box, Card } from '@mui/material';
+import { RJSFSchema } from '@rjsf/utils';
 import { type MRT_ColumnDef } from 'material-react-table';
 
 import TablePage from '@/components/TablePage';
 
+import { commonSchema, commonUiSchema } from '../schemas/CommonFormSchemas';
 import * as services from '../services';
 import { Role } from '../types';
+
+const schema: RJSFSchema = commonSchema;
+const uiSchema = commonUiSchema;
 
 const RoleTable = () => {
   const columns = useMemo<MRT_ColumnDef<Record<string, unknown>>[]>(
@@ -61,34 +66,6 @@ const RoleTable = () => {
       desc: true,
     },
   ];
-
-  const schema = {
-    type: 'object',
-    required: ['name'],
-    properties: {
-      name: {
-        type: 'string',
-        maxLength: 255,
-      },
-      description: {
-        type: 'string',
-        maxLength: 255,
-      },
-    },
-  };
-
-  const uiSchema = {
-    name: {
-      'ui:title': 'Name',
-    },
-    description: {
-      'ui:title': 'Description',
-      'ui:widget': 'textarea',
-    },
-    'ui:submitButtonOptions': {
-      norender: true,
-    },
-  };
 
   const tableActionConfig = {
     add: {
