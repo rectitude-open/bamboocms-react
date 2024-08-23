@@ -16,7 +16,7 @@ const schema: RJSFSchema = commonSchema;
 const uiSchema = commonUiSchema;
 
 const RoleTable = () => {
-  const columns = useMemo<MRT_ColumnDef<Record<string, unknown>>[]>(
+  const columns = useMemo<MRT_ColumnDef<Role>[]>(
     () => [
       {
         accessorFn: (row) => `${row.id}`,

@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Add, Delete, Edit, FileCopy, MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, Button, Divider, IconButton, lighten, MenuItem, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { RJSFSchema } from '@rjsf/utils';
+import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
@@ -64,11 +64,12 @@ const TablePage = <T extends BaseEntity>({
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogSchema, setDialogSchema] = useState<RJSFSchema>();
-  const [dialogUiSchema, setDialogUiSchema] = useState();
+  const [dialogUiSchema, setDialogUiSchema] = useState<UiSchema>();
   const [dialogServices, setDialogServices] = useState({});
   const router = useRouter();
+  const [tableData, setTableData] = useState<T[]>([]);
 
-  const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse>({
+  const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse<T>>({
     queryKey: ['table-data', columnFilters, globalFilter, pagination.pageIndex, pagination.pageSize, sorting],
     queryFn: async () => {
       const params = {
@@ -99,8 +100,8 @@ const TablePage = <T extends BaseEntity>({
         title={dialogTitle}
         id={id!}
         services={dialogServices}
-        schema={dialogSchema}
-        uiSchema={dialogUiSchema}
+        schema={dialogSchema!}
+        uiSchema={dialogUiSchema!}
         onSubmitSuccess={handleSubmitSuccess}
       />
     ),
@@ -117,15 +118,15 @@ const TablePage = <T extends BaseEntity>({
             initService: config.initService,
             submitService: config.submitService,
           });
-          setDialogSchema(config?.schema);
-          setDialogUiSchema(config?.uiSchema);
+          config?.schema && setDialogSchema(config.schema);
+          config?.uiSchema && setDialogUiSchema(config.uiSchema);
           setId(record?.id ?? 0);
           setOpenDialog(true);
         }
         break;
       case 'page':
         {
-          const queryString = config?.params.map((param) => `${param}=${row.original[param]}`).join('&');
+          const queryString = config?.params.map((param) => `${param}=${record[param]}`).join('&');
           router.push(`${config?.url}?${queryString}`);
         }
         break;
@@ -169,12 +170,18 @@ const TablePage = <T extends BaseEntity>({
     );
   };
 
+  useEffect(() => {
+    if (data?.data) {
+      setTableData(data.data as T[]);
+    }
+  }, [data]);
+
   return (
     <Card>
       <ThemeProvider theme={theme}>
-        <MaterialReactTable
+        <MaterialReactTable<T>
           columns={columns}
-          data={(data?.data as Record<string, unknown>[]) ?? []}
+          data={tableData}
           initialState={{
             columnPinning: { right: ['mrt-row-actions'] },
           }}

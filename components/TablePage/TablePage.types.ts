@@ -5,7 +5,7 @@ import { BaseEntity, UpdateEntity } from '@/types/BaseEntity';
 
 export interface TablePageProps<T extends BaseEntity> {
   actionConfig: any;
-  columns: MRT_ColumnDef<Record<string, unknown>>[];
+  columns: MRT_ColumnDef<T>[];
   defaultSorting?: MRT_SortingState;
   tableService: FetchService;
 }

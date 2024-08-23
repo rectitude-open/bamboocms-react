@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from 'react';
+import React, { createRef, useCallback, useEffect, useState } from 'react';
 import { Close as CloseIcon } from '@mui/icons-material';
 import {
   Box,
@@ -52,9 +52,9 @@ const BaseDialog = <T extends Record<string, unknown>>({
     }
   }, [formData, open]);
 
-  const resetFormData = () => {
+  const resetFormData = useCallback(() => {
     setInternalFormData({} as T);
-  };
+  }, []);
 
   useEffect(() => {
     if (!open) {
@@ -64,7 +64,7 @@ const BaseDialog = <T extends Record<string, unknown>>({
     return () => {
       ref?.reset();
     };
-  }, [open]);
+  }, [open, resetFormData]);
 
   function handleDialogClose() {
     resetFormData();
