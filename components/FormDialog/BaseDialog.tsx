@@ -94,7 +94,7 @@ const BaseDialog = <T extends Record<string, unknown>>({
             </IconButton>
           </DialogTitle>
 
-          <DialogContent dividers>
+          <DialogContent dividers style={{ paddingTop: '3px' }}>
             <ThemeForm
               ref={formRef}
               schema={schema}
