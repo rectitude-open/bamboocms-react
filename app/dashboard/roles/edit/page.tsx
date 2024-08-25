@@ -45,7 +45,7 @@ const Page = () => {
 
   useEffect(() => {
     if (data) {
-      setFormData(data.data);
+      setFormData(data.data as Role);
     }
   }, [data]);
 
