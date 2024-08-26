@@ -89,6 +89,14 @@ const RoleTable = () => {
       schema,
       uiSchema,
     },
+    duplicate: {
+      title: 'Duplicate Role',
+      initService: services.view,
+      submitService: services.create,
+      formType: 'dialog',
+      schema,
+      uiSchema,
+    },
   };
 
   return (

@@ -53,13 +53,7 @@ const TablePage = <T extends BaseEntity>({
     pageSize: 10,
   });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+
   const [id, setId] = useState<number | undefined>();
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
@@ -68,6 +62,18 @@ const TablePage = <T extends BaseEntity>({
   const [dialogServices, setDialogServices] = useState({});
   const router = useRouter();
   const [tableData, setTableData] = useState<T[]>([]);
+  const [selectedRow, setSelectedRow] = useState<MRT_Row<T> | undefined>();
+  const moreMenuOpen = Boolean(anchorEl);
+
+  const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>, row: MRT_Row<T>) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedRow(row);
+  };
+
+  const handleMoreMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedRow(undefined);
+  };
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse<T>>({
     queryKey: ['table-data', columnFilters, globalFilter, pagination.pageIndex, pagination.pageSize, sorting],
@@ -108,30 +114,34 @@ const TablePage = <T extends BaseEntity>({
     [openDialog, id, dialogTitle, dialogServices, handleSubmitSuccess, dialogSchema, dialogUiSchema]
   );
 
-  const handleAction = (config: any, record: any = {}) => {
-    const formType = config.formType ?? 'page';
-    switch (formType) {
-      case 'dialog':
-        {
-          setDialogTitle(config?.title ?? 'Edit');
-          setDialogServices({
-            initService: config.initService,
-            submitService: config.submitService,
-          });
-          config?.schema && setDialogSchema(config.schema);
-          config?.uiSchema && setDialogUiSchema(config.uiSchema);
-          setId(record?.id ?? 0);
-          setOpenDialog(true);
-        }
-        break;
-      case 'page':
-        {
-          const queryString = config?.params.map((param) => `${param}=${record[param]}`).join('&');
-          router.push(`${config?.url}?${queryString}`);
-        }
-        break;
-    }
-  };
+  const handleAction = useCallback(
+    (config: any, record: any = {}) => {
+      const formType = config.formType ?? 'page';
+      switch (formType) {
+        case 'dialog':
+          {
+            setDialogTitle(config?.title ?? 'Edit');
+            setDialogServices({
+              initService: config.initService,
+              submitService: config.submitService,
+            });
+            config?.schema && setDialogSchema(config.schema);
+            config?.uiSchema && setDialogUiSchema(config.uiSchema);
+            setId(record?.id ?? 0);
+            setOpenDialog(true);
+            handleMoreMenuClose();
+          }
+          break;
+        case 'page':
+          {
+            const queryString = config?.params.map((param) => `${param}=${record[param]}`).join('&');
+            router.push(`${config?.url}?${queryString}`);
+          }
+          break;
+      }
+    },
+    [router]
+  );
 
   const editAction = (row: MRT_Row<T>) => {
     if (!row?.original?.id || !actionConfig?.edit) return;
@@ -170,6 +180,26 @@ const TablePage = <T extends BaseEntity>({
     );
   };
 
+  const duplicateAction = useCallback(
+    (row: MRT_Row<T>) => {
+      if (!row?.original?.id || !actionConfig?.duplicate) return;
+
+      const duplicateConfig = actionConfig?.duplicate;
+
+      return (
+        <MenuItem
+          onClick={() => {
+            handleAction(duplicateConfig, row.original);
+          }}
+        >
+          <FileCopy />
+          Duplicate
+        </MenuItem>
+      );
+    },
+    [actionConfig, handleAction]
+  );
+
   useEffect(() => {
     if (data?.data) {
       setTableData(data.data as T[]);
@@ -199,8 +229,8 @@ const TablePage = <T extends BaseEntity>({
           enableRowSelection
           enableColumnPinning
           state={{
-            isLoading,
-            showProgressBars: isRefetching,
+            isLoading: isLoading || isRefetching,
+            showProgressBars: isLoading || isRefetching,
             columnFilters,
             globalFilter,
             pagination,
@@ -233,10 +263,12 @@ const TablePage = <T extends BaseEntity>({
               <IconButton
                 aria-label="more"
                 id="more-button"
-                aria-controls={open ? 'action-menu' : undefined}
-                aria-expanded={open ? 'true' : undefined}
+                aria-controls={moreMenuOpen ? 'action-menu' : undefined}
+                aria-expanded={moreMenuOpen ? 'true' : undefined}
                 aria-haspopup="true"
-                onClick={handleClick}
+                onClick={(event) => {
+                  handleMoreMenuClick(event, row);
+                }}
               >
                 <MoreHoriz />
               </IconButton>
@@ -246,13 +278,10 @@ const TablePage = <T extends BaseEntity>({
                   'aria-labelledby': 'more-button',
                 }}
                 anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
+                open={moreMenuOpen}
+                onClose={handleMoreMenuClose}
               >
-                <MenuItem>
-                  <FileCopy />
-                  Duplicate
-                </MenuItem>
+                {selectedRow && duplicateAction(selectedRow)}
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem>
                   <Delete />
