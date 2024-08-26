@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
@@ -36,8 +36,10 @@ const FormDialog = <T extends Record<string, unknown>>({
   const [submitLoading, setSubmitLoading] = useState(false);
   const [initialFormData, setInitialFormData] = useState<any>({});
 
+  const queryKey = useMemo(() => ['view-form', id], [id]);
+
   const { data, isError, isLoading, isRefetching } = useQuery<ApiResponse>({
-    queryKey: ['view-form', id],
+    queryKey: queryKey,
     queryFn: async () => {
       const response = await initService!(Number(id));
       return response;
@@ -52,7 +54,7 @@ const FormDialog = <T extends Record<string, unknown>>({
     },
     onSuccess: (data) => {
       enqueueSnackbar(data.message || 'Submitted successfully!', { variant: 'success' });
-      queryClient.invalidateQueries({ queryKey: ['view-form'] });
+      queryClient.invalidateQueries({ queryKey: queryKey });
       setSubmitLoading(false);
       handleClose();
       onSubmitSuccess();
@@ -64,17 +66,17 @@ const FormDialog = <T extends Record<string, unknown>>({
   });
 
   useEffect(() => {
-    // cannot add open to the dependency array, it will cause fail to clear form data
-    if (data?.data) {
+    if (open && data?.data) {
       setInitialFormData(data.data);
     }
-  }, [data]);
+  }, [data, open]);
 
   useEffect(() => {
     if (!open) {
       setInitialFormData({});
+      queryClient.resetQueries({ queryKey: queryKey });
     }
-  }, [open]);
+  }, [open, queryClient, queryKey]);
 
   const handleDialogClose = () => {
     handleClose();
