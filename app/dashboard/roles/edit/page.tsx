@@ -14,7 +14,7 @@ import { useSnackbar } from 'notistack';
 import type { ApiResponse } from '@/types/api';
 
 import { commonSchema, commonUiSchema } from '../schemas/CommonFormSchemas';
-import * as services from '../services';
+import { update, view } from '../services';
 import { Role } from '../types';
 
 const schema: RJSFSchema = commonSchema;
@@ -34,10 +34,10 @@ const Page = () => {
 
   const id = searchParams.get('id');
 
-  const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse<Role>>({
+  const { data, isError, isLoading } = useQuery<ApiResponse<Role>>({
     queryKey: ['edit', id],
     queryFn: async () => {
-      const response = await services.view(Number(id));
+      const response = await view(Number(id));
       return response;
     },
     enabled: !!id,
@@ -50,7 +50,7 @@ const Page = () => {
   }, [data]);
 
   const mutation = useMutation({
-    mutationFn: services.update,
+    mutationFn: update,
     onMutate: () => {
       setLoading(true);
       setDisableSubmit(true);
