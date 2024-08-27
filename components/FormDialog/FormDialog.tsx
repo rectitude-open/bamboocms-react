@@ -54,7 +54,6 @@ const FormDialog = <T extends Record<string, unknown>>({
     },
     onSuccess: (data) => {
       enqueueSnackbar(data.message || 'Submitted successfully!', { variant: 'success' });
-      queryClient.invalidateQueries({ queryKey: queryKey });
       setSubmitLoading(false);
       handleClose();
       onSubmitSuccess();
