@@ -74,10 +74,10 @@ const TablePage = <T extends BaseEntity>({
     setSelectedRow(row);
   };
 
-  const handleMoreMenuClose = () => {
+  const handleMoreMenuClose = useCallback(() => {
     setAnchorEl(null);
     setSelectedRow(undefined);
-  };
+  }, []);
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse<T>>({
     queryKey: ['table-data', columnFilters, globalFilter, pagination.pageIndex, pagination.pageSize, sorting],
@@ -95,9 +95,9 @@ const TablePage = <T extends BaseEntity>({
     enabled: !!tableService,
   });
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = useCallback(() => {
     setOpenDialog(false);
-  };
+  }, []);
 
   const handleSubmitSuccess = useCallback(() => {
     refetch();
@@ -148,24 +148,27 @@ const TablePage = <T extends BaseEntity>({
     [router]
   );
 
-  const editAction = (row: MRT_Row<T>) => {
-    if (!row?.original?.id || !actionConfig?.edit) return;
+  const editAction = useCallback(
+    (row: MRT_Row<T>) => {
+      if (!row?.original?.id || !actionConfig?.edit) return;
 
-    const editConfig = actionConfig?.edit;
+      const editConfig = actionConfig?.edit;
 
-    return (
-      <IconButton
-        color="secondary"
-        onClick={() => {
-          handleAction(editConfig, row.original);
-        }}
-      >
-        <Edit />
-      </IconButton>
-    );
-  };
+      return (
+        <IconButton
+          color="secondary"
+          onClick={() => {
+            handleAction(editConfig, row.original);
+          }}
+        >
+          <Edit />
+        </IconButton>
+      );
+    },
+    [actionConfig, handleAction]
+  );
 
-  const addAction = () => {
+  const addAction = useCallback(() => {
     if (!actionConfig?.add) return;
 
     const addConfig = actionConfig?.add;
@@ -183,7 +186,7 @@ const TablePage = <T extends BaseEntity>({
         Add
       </Button>
     );
-  };
+  }, [actionConfig, handleAction]);
 
   const duplicateAction = useCallback(
     (row: MRT_Row<T>) => {
@@ -249,6 +252,24 @@ const TablePage = <T extends BaseEntity>({
     }
   }, [data]);
 
+  const renderToolbarInternalActions = useMemo(
+    () =>
+      ({ table }) => (
+        <>
+          <MRT_ToggleDensePaddingButton table={table} />
+          <MRT_ShowHideColumnsButton table={table} />
+          <MRT_ToggleFullScreenButton table={table} />
+          <Tooltip arrow title="Refresh Data">
+            <IconButton onClick={() => refetch()}>
+              <RefreshIcon />
+            </IconButton>
+          </Tooltip>
+          {addAction()}
+        </>
+      ),
+    [addAction, refetch]
+  );
+
   return (
     <Card>
       <ThemeProvider theme={theme}>
@@ -285,19 +306,7 @@ const TablePage = <T extends BaseEntity>({
           onPaginationChange={setPagination}
           onSortingChange={setSorting}
           columnFilterDisplayMode="popover"
-          renderToolbarInternalActions={({ table }) => (
-            <>
-              <MRT_ToggleDensePaddingButton table={table} />
-              <MRT_ShowHideColumnsButton table={table} />
-              <MRT_ToggleFullScreenButton table={table} />
-              <Tooltip arrow title="Refresh Data">
-                <IconButton onClick={() => refetch()}>
-                  <RefreshIcon />
-                </IconButton>
-              </Tooltip>
-              {addAction()}
-            </>
-          )}
+          renderToolbarInternalActions={renderToolbarInternalActions}
           enableRowActions
           positionActionsColumn="last"
           renderRowActions={({ row }) => (
