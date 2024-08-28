@@ -97,6 +97,12 @@ const RoleTable = () => {
       schema,
       uiSchema,
     },
+    delete: {
+      title: 'Delete Role',
+      submitService: services.remove,
+      schema,
+      uiSchema,
+    },
   };
 
   return (

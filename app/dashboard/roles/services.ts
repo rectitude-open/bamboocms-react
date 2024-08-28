@@ -26,3 +26,8 @@ export const update: UpdateService<UpdateRole> = async (payload) => {
   const response = await axiosInstance.put(`/admin/administrator-roles/${id}`, data);
   return response.data;
 };
+
+export const remove = async (id: number) => {
+  const response = await axiosInstance.delete(`/admin/administrator-roles/${id}`);
+  return response.data;
+};

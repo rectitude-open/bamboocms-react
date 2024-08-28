@@ -17,9 +17,11 @@ import {
   type MRT_PaginationState,
   type MRT_SortingState,
 } from 'material-react-table';
+import { useSnackbar } from 'notistack';
 
 import type { ApiResponse } from '@/types/api';
 import { BaseEntity } from '@/types/BaseEntity';
+import useConfirmationDialog from '@/hooks/useConfirmationDialog';
 import FormDialog from '@/components/FormDialog/FormDialog';
 
 import StyledMenu from './components/StyledMenu';
@@ -53,7 +55,7 @@ const TablePage = <T extends BaseEntity>({
     pageSize: 10,
   });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+  const { enqueueSnackbar } = useSnackbar();
   const [id, setId] = useState<number | undefined>();
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
@@ -64,6 +66,8 @@ const TablePage = <T extends BaseEntity>({
   const [tableData, setTableData] = useState<T[]>([]);
   const [selectedRow, setSelectedRow] = useState<MRT_Row<T> | undefined>();
   const moreMenuOpen = Boolean(anchorEl);
+
+  const { ConfirmationDialog, openConfirmationDialog } = useConfirmationDialog();
 
   const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>, row: MRT_Row<T>) => {
     setAnchorEl(event.currentTarget);
@@ -88,6 +92,7 @@ const TablePage = <T extends BaseEntity>({
       const response = await tableService(params);
       return response;
     },
+    enabled: !!tableService,
   });
 
   const handleCloseDialog = () => {
@@ -200,6 +205,44 @@ const TablePage = <T extends BaseEntity>({
     [actionConfig, handleAction]
   );
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return actionConfig?.delete?.submitService && (await actionConfig.delete.submitService(id));
+    },
+    onSuccess: (data) => {
+      enqueueSnackbar(data?.message ?? 'Delete successfully!', { variant: 'success' });
+      refetch();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const deleteAction = useCallback(
+    (row: MRT_Row<T>) => {
+      if (!row?.original?.id || !actionConfig?.delete) return;
+
+      return (
+        <MenuItem
+          onClick={() => {
+            handleMoreMenuClose();
+            openConfirmationDialog({
+              title: `[ID: ${row.original.id}] ${row.original.title ?? row.original.name ?? ''}`,
+              content: 'Are you sure you want to delete this record?',
+              onConfirm: async () => {
+                await deleteMutation.mutateAsync(row.original.id);
+              },
+            });
+          }}
+        >
+          <Delete />
+          Delete
+        </MenuItem>
+      );
+    },
+    [actionConfig, deleteMutation, openConfirmationDialog]
+  );
+
   useEffect(() => {
     if (data?.data) {
       setTableData(data.data as T[]);
@@ -283,10 +326,7 @@ const TablePage = <T extends BaseEntity>({
               >
                 {selectedRow && duplicateAction(selectedRow)}
                 <Divider sx={{ my: 0.5 }} />
-                <MenuItem>
-                  <Delete />
-                  Delete
-                </MenuItem>
+                {selectedRow && deleteAction(selectedRow)}
               </StyledMenu>
             </Box>
           )}
@@ -333,6 +373,7 @@ const TablePage = <T extends BaseEntity>({
           rowCount={data?.meta?.total ?? 0}
         />
         {formDialog}
+        {ConfirmationDialog}
       </ThemeProvider>
     </Card>
   );
