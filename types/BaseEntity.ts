@@ -2,6 +2,7 @@ export interface BaseEntity {
   id: number;
   created_at: string;
   updated_at: string;
+  [key: string]: unknown;
 }
 
 export type RequireOnly<T, K extends keyof T> = Partial<T> & Pick<T, K>;
