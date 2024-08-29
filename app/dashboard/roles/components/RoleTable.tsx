@@ -3,17 +3,18 @@
 import React, { useMemo } from 'react';
 import { formatDate } from '@/utils/dateUtils';
 import { Box, Card } from '@mui/material';
-import { RJSFSchema } from '@rjsf/utils';
+import { type RJSFSchema, type UiSchema } from '@rjsf/utils';
 import { type MRT_ColumnDef } from 'material-react-table';
 
 import TablePage from '@/components/TablePage';
+import { TableActionConfig } from '@/components/TablePage/TablePage.types';
 
 import { commonSchema, commonUiSchema } from '../schemas/CommonFormSchemas';
 import * as services from '../services';
 import { Role } from '../types';
 
 const schema: RJSFSchema = commonSchema;
-const uiSchema = commonUiSchema;
+const uiSchema: UiSchema = commonUiSchema;
 
 const RoleTable = () => {
   const columns = useMemo<MRT_ColumnDef<Role>[]>(
@@ -67,10 +68,9 @@ const RoleTable = () => {
     },
   ];
 
-  const tableActionConfig = {
+  const tableActionConfig: { [key: string]: TableActionConfig } = {
     add: {
       title: 'Add Role',
-      initService: null,
       submitService: services.create,
       formType: 'dialog',
       schema,
@@ -100,8 +100,7 @@ const RoleTable = () => {
     delete: {
       title: 'Delete Role',
       submitService: services.remove,
-      schema,
-      uiSchema,
+      formType: 'action',
     },
   };
 

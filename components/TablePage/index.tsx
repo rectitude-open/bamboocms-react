@@ -16,6 +16,7 @@ import {
   type MRT_ColumnFiltersState,
   type MRT_PaginationState,
   type MRT_SortingState,
+  type MRT_TableInstance,
 } from 'material-react-table';
 import { useSnackbar } from 'notistack';
 
@@ -117,7 +118,7 @@ const TablePage = <T extends BaseEntity>({
         onSubmitSuccess={handleSubmitSuccess}
       />
     ),
-    [openDialog, id, dialogTitle, dialogServices, handleSubmitSuccess, dialogSchema, dialogUiSchema]
+    [openDialog, id, dialogTitle, dialogServices, handleSubmitSuccess, dialogSchema, dialogUiSchema, handleCloseDialog]
   );
 
   const handleAction = useCallback(
@@ -146,7 +147,7 @@ const TablePage = <T extends BaseEntity>({
           break;
       }
     },
-    [router]
+    [router, handleMoreMenuClose]
   );
 
   const editAction = useCallback(
@@ -244,7 +245,7 @@ const TablePage = <T extends BaseEntity>({
         </MenuItem>
       );
     },
-    [actionConfig, deleteMutation, openConfirmationDialog]
+    [actionConfig, deleteMutation, openConfirmationDialog, handleMoreMenuClose]
   );
 
   useEffect(() => {
@@ -255,23 +256,22 @@ const TablePage = <T extends BaseEntity>({
         setTotalRowCount(data.meta?.total);
       }
     }
-  }, [data]);
+  }, [data, totalRowCount]);
 
-  const renderToolbarInternalActions = useMemo(
-    () =>
-      ({ table }) => (
-        <>
-          <MRT_ToggleDensePaddingButton table={table} />
-          <MRT_ShowHideColumnsButton table={table} />
-          <MRT_ToggleFullScreenButton table={table} />
-          <Tooltip arrow title="Refresh Data">
-            <IconButton onClick={() => refetch()}>
-              <RefreshIcon />
-            </IconButton>
-          </Tooltip>
-          {addAction()}
-        </>
-      ),
+  const renderToolbarInternalActions = useCallback(
+    ({ table }: { table: MRT_TableInstance<T> }) => (
+      <>
+        <MRT_ToggleDensePaddingButton table={table} />
+        <MRT_ShowHideColumnsButton table={table} />
+        <MRT_ToggleFullScreenButton table={table} />
+        <Tooltip arrow title="Refresh Data">
+          <IconButton onClick={() => refetch()}>
+            <RefreshIcon />
+          </IconButton>
+        </Tooltip>
+        {addAction()}
+      </>
+    ),
     [addAction, refetch]
   );
 
