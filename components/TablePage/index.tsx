@@ -66,6 +66,7 @@ const TablePage = <T extends BaseEntity>({
   const [tableData, setTableData] = useState<T[]>([]);
   const [selectedRow, setSelectedRow] = useState<MRT_Row<T> | undefined>();
   const moreMenuOpen = Boolean(anchorEl);
+  const [totalRowCount, setTotalRowCount] = useState(0);
 
   const { ConfirmationDialog, openConfirmationDialog } = useConfirmationDialog();
 
@@ -249,6 +250,10 @@ const TablePage = <T extends BaseEntity>({
   useEffect(() => {
     if (data?.data) {
       setTableData(data.data as T[]);
+
+      if (data.meta?.total && data.meta?.total !== totalRowCount) {
+        setTotalRowCount(data.meta?.total);
+      }
     }
   }, [data]);
 
@@ -339,11 +344,9 @@ const TablePage = <T extends BaseEntity>({
               </StyledMenu>
             </Box>
           )}
-          paginationDisplayMode="pages"
           muiPaginationProps={{
             color: 'secondary',
             rowsPerPageOptions: [10, 20, 30],
-            shape: 'rounded',
             variant: 'outlined',
           }}
           positionToolbarAlertBanner="top"
@@ -379,7 +382,7 @@ const TablePage = <T extends BaseEntity>({
               </Box>
             );
           }}
-          rowCount={data?.meta?.total ?? 0}
+          rowCount={totalRowCount}
         />
         {formDialog}
         {ConfirmationDialog}
