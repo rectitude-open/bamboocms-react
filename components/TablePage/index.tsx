@@ -141,7 +141,7 @@ const TablePage = <T extends BaseEntity>({
           break;
         case 'page':
           {
-            const queryString = config?.params.map((param) => `${param}=${record[param]}`).join('&');
+            const queryString = (config?.params || []).map((param: string) => `${param}=${record[param]}`).join('&');
             router.push(`${config?.url}?${queryString}`);
           }
           break;
