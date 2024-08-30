@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Key, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Add, Delete, Edit, FileCopy, MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -223,6 +223,19 @@ const TablePage = <T extends BaseEntity>({
     },
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: number[]) => {
+      return actionConfig?.bulkDelete?.submitService && (await actionConfig.bulkDelete.submitService(ids));
+    },
+    onSuccess: (data) => {
+      enqueueSnackbar(data?.message ?? 'Bulk Delete successfully!', { variant: 'success' });
+      refetch();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   const deleteAction = useCallback(
     (row: MRT_Row<T>) => {
       if (!row?.original?.id || !actionConfig?.delete) return;
@@ -247,6 +260,31 @@ const TablePage = <T extends BaseEntity>({
     },
     [actionConfig, deleteMutation, openConfirmationDialog, handleMoreMenuClose]
   );
+
+  const handleBulkDelete = (table: MRT_TableInstance<T>) => {
+    const rowIds = table.getSelectedRowModel().flatRows.map((row) => row.original.id);
+    const rowTitles = table
+      .getSelectedRowModel()
+      .flatRows.map((row) => (row.original.title ?? row.original.name ?? row.original.id) as Key);
+
+    openConfirmationDialog({
+      title: 'Bulk Delete',
+      content: (
+        <>
+          Are you sure you want to delete these records?
+          <ul>
+            {rowTitles.map((title) => (
+              <li key={title}>{String(title)}</li>
+            ))}
+          </ul>
+        </>
+      ),
+      onConfirm: async () => {
+        await bulkDeleteMutation.mutateAsync(rowIds);
+        table.setRowSelection([] as any);
+      },
+    });
+  };
 
   useEffect(() => {
     if (data?.data) {
@@ -351,11 +389,6 @@ const TablePage = <T extends BaseEntity>({
           }}
           positionToolbarAlertBanner="top"
           renderBottomToolbarCustomActions={({ table }) => {
-            const handleDelete = () => {
-              table.getSelectedRowModel().flatRows.map((row) => {
-                alert('deleting ' + row.getValue('name'));
-              });
-            };
             return (
               <Box
                 sx={(theme) => ({
@@ -370,10 +403,10 @@ const TablePage = <T extends BaseEntity>({
                   <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                     <Button
                       color="error"
-                      onClick={handleDelete}
+                      onClick={() => handleBulkDelete(table)}
                       variant="contained"
                       startIcon={<Delete />}
-                      disabled={!table.getIsSomeRowsSelected()}
+                      disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
                     >
                       Delete
                     </Button>
