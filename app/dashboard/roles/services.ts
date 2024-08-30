@@ -27,12 +27,12 @@ export const update: UpdateService<UpdateRole> = async (payload) => {
   return response.data;
 };
 
-export const remove = async (id: number) => {
+export const destroy = async (id: number) => {
   const response = await axiosInstance.delete(`/admin/administrator-roles/${id}`);
   return response.data;
 };
 
-export const bulkRemove = async (ids: number[]) => {
+export const bulkDestroy = async (ids: number[]) => {
   const response = await axiosInstance.post(`/admin/administrator-roles/bulk`, { ids, _method: 'DELETE' });
   return response.data;
 };

@@ -98,11 +98,11 @@ const RoleTable = () => {
       uiSchema,
     },
     delete: {
-      submitService: services.remove,
+      submitService: services.destroy,
       formType: 'action',
     },
     bulkDelete: {
-      submitService: services.bulkRemove,
+      submitService: services.bulkDestroy,
       formType: 'action',
     },
   };
