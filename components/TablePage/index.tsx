@@ -26,6 +26,7 @@ import useConfirmationDialog from '@/hooks/useConfirmationDialog';
 import FormDialog from '@/components/FormDialog/FormDialog';
 
 import StyledMenu from './components/StyledMenu';
+import useDeleteMutation from './hooks/useDeleteMutation';
 import { TablePageProps } from './TablePage.types';
 
 const theme = createTheme({
@@ -96,6 +97,8 @@ const TablePage = <T extends BaseEntity>({
     },
     enabled: !!tableService,
   });
+
+  const { deleteMutation, bulkDeleteMutation } = useDeleteMutation(actionConfig, refetch);
 
   const handleCloseDialog = useCallback(() => {
     setOpenDialog(false);
@@ -209,32 +212,6 @@ const TablePage = <T extends BaseEntity>({
     },
     [actionConfig, handleAction]
   );
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: number) => {
-      return actionConfig?.delete?.submitService && (await actionConfig.delete.submitService(id));
-    },
-    onSuccess: (data) => {
-      enqueueSnackbar(data?.message ?? 'Delete successfully!', { variant: 'success' });
-      refetch();
-    },
-    onError: (error) => {
-      console.error(error);
-    },
-  });
-
-  const bulkDeleteMutation = useMutation({
-    mutationFn: async (ids: number[]) => {
-      return actionConfig?.bulkDelete?.submitService && (await actionConfig.bulkDelete.submitService(ids));
-    },
-    onSuccess: (data) => {
-      enqueueSnackbar(data?.message ?? 'Bulk Delete successfully!', { variant: 'success' });
-      refetch();
-    },
-    onError: (error) => {
-      console.error(error);
-    },
-  });
 
   const deleteAction = useCallback(
     (row: MRT_Row<T>) => {
