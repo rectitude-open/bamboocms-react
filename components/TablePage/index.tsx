@@ -9,12 +9,12 @@ import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
-  MRT_Row,
   MRT_ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton,
   MRT_ToggleFullScreenButton,
   type MRT_ColumnFiltersState,
   type MRT_PaginationState,
+  type MRT_Row,
   type MRT_SortingState,
   type MRT_TableInstance,
 } from 'material-react-table';
@@ -24,6 +24,7 @@ import { BaseEntity } from '@/types/BaseEntity';
 import useConfirmationDialog from '@/hooks/useConfirmationDialog';
 import FormDialog from '@/components/FormDialog/FormDialog';
 
+import DeleteAction from './actions/DeleteAction';
 import StyledMenu from './components/StyledMenu';
 import useRequests from './hooks/useRequests';
 import { TablePageProps } from './TablePage.types';
@@ -211,31 +212,6 @@ const TablePage = <T extends BaseEntity>({
     [actionConfig, handleAction]
   );
 
-  const deleteAction = useCallback(
-    (row: MRT_Row<T>) => {
-      if (!row?.original?.id || !actionConfig?.delete) return;
-
-      return (
-        <MenuItem
-          onClick={() => {
-            handleMoreMenuClose();
-            openConfirmationDialog({
-              title: `[ID: ${row.original.id}] ${row.original.title ?? row.original.name ?? ''}`,
-              content: 'Are you sure you want to delete this record?',
-              onConfirm: async () => {
-                await deleteMutation.mutateAsync(row.original.id);
-              },
-            });
-          }}
-        >
-          <Delete />
-          Delete
-        </MenuItem>
-      );
-    },
-    [actionConfig, deleteMutation, openConfirmationDialog, handleMoreMenuClose]
-  );
-
   const handleBulkDelete = (table: MRT_TableInstance<T>) => {
     const rowIds = table.getSelectedRowModel().flatRows.map((row) => row.original.id);
     const rowTitles = table
@@ -353,7 +329,15 @@ const TablePage = <T extends BaseEntity>({
               >
                 {selectedRow && duplicateAction(selectedRow)}
                 <Divider sx={{ my: 0.5 }} />
-                {selectedRow && deleteAction(selectedRow)}
+                {selectedRow && (
+                  <DeleteAction
+                    row={selectedRow as unknown as MRT_Row<BaseEntity>}
+                    handleMoreMenuClose={handleMoreMenuClose}
+                    actionConfig={actionConfig}
+                    refetch={refetch}
+                    openConfirmationDialog={openConfirmationDialog}
+                  />
+                )}
               </StyledMenu>
             </Box>
           )}
