@@ -6,7 +6,7 @@ import { Box, Button, Divider, IconButton, lighten, MenuItem, Tooltip } from '@m
 import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
   MRT_Row,
@@ -18,7 +18,6 @@ import {
   type MRT_SortingState,
   type MRT_TableInstance,
 } from 'material-react-table';
-import { useSnackbar } from 'notistack';
 
 import type { ApiResponse } from '@/types/api';
 import { BaseEntity } from '@/types/BaseEntity';
@@ -26,7 +25,7 @@ import useConfirmationDialog from '@/hooks/useConfirmationDialog';
 import FormDialog from '@/components/FormDialog/FormDialog';
 
 import StyledMenu from './components/StyledMenu';
-import useDeleteMutation from './hooks/useDeleteMutation';
+import useRequests from './hooks/useRequests';
 import { TablePageProps } from './TablePage.types';
 
 const theme = createTheme({
@@ -57,7 +56,6 @@ const TablePage = <T extends BaseEntity>({
     pageSize: 10,
   });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const { enqueueSnackbar } = useSnackbar();
   const [id, setId] = useState<number | undefined>();
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
@@ -98,7 +96,7 @@ const TablePage = <T extends BaseEntity>({
     enabled: !!tableService,
   });
 
-  const { deleteMutation, bulkDeleteMutation } = useDeleteMutation(actionConfig, refetch);
+  const { deleteMutation, bulkDeleteMutation } = useRequests(actionConfig, refetch);
 
   const handleCloseDialog = useCallback(() => {
     setOpenDialog(false);

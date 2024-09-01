@@ -5,7 +5,7 @@ import { ViewService, type FetchService, type UpdateService } from '@/types/api'
 import { BaseEntity, UpdateEntity } from '@/types/BaseEntity';
 
 export interface TablePageProps<T extends BaseEntity> {
-  actionConfig: any;
+  actionConfig: { [key: string]: TableActionConfig };
   columns: MRT_ColumnDef<T>[];
   defaultSorting?: MRT_SortingState;
   tableService: FetchService;
