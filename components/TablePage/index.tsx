@@ -28,6 +28,7 @@ import AddAction from './actions/AddAction';
 import BulkDeleteAction from './actions/BulkDeleteAction';
 import DeleteAction from './actions/DeleteAction';
 import DuplicateAction from './actions/DuplicateAction';
+import EditAction from './actions/EditAction';
 import StyledMenu from './components/StyledMenu';
 import useRequests from './hooks/useRequests';
 import { TablePageProps } from './TablePage.types';
@@ -100,8 +101,6 @@ const TablePage = <T extends BaseEntity>({
     enabled: !!tableService,
   });
 
-  const { deleteMutation, bulkDeleteMutation } = useRequests(actionConfig, refetch);
-
   const handleCloseDialog = useCallback(() => {
     setOpenDialog(false);
   }, []);
@@ -153,26 +152,6 @@ const TablePage = <T extends BaseEntity>({
       }
     },
     [router, handleMoreMenuClose]
-  );
-
-  const editAction = useCallback(
-    (row: MRT_Row<T>) => {
-      if (!row?.original?.id || !actionConfig?.edit) return;
-
-      const editConfig = actionConfig?.edit;
-
-      return (
-        <IconButton
-          color="secondary"
-          onClick={() => {
-            handleAction(editConfig, row.original);
-          }}
-        >
-          <Edit />
-        </IconButton>
-      );
-    },
-    [actionConfig, handleAction]
   );
 
   useEffect(() => {
@@ -243,7 +222,13 @@ const TablePage = <T extends BaseEntity>({
           positionActionsColumn="last"
           renderRowActions={({ row }) => (
             <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-              {editAction(row)}
+              {row && (
+                <EditAction
+                  row={row as unknown as MRT_Row<BaseEntity>}
+                  actionConfig={actionConfig}
+                  handleAction={handleAction}
+                />
+              )}
               <IconButton
                 aria-label="more"
                 id="more-button"
@@ -265,7 +250,6 @@ const TablePage = <T extends BaseEntity>({
                 open={moreMenuOpen}
                 onClose={handleMoreMenuClose}
               >
-                {/* {selectedRow && duplicateAction(selectedRow)} */}
                 {selectedRow && (
                   <DuplicateAction
                     row={selectedRow as unknown as MRT_Row<BaseEntity>}
