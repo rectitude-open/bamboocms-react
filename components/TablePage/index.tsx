@@ -26,6 +26,7 @@ import FormDialog from '@/components/FormDialog/FormDialog';
 
 import BulkDeleteAction from './actions/BulkDeleteAction';
 import DeleteAction from './actions/DeleteAction';
+import DuplicateAction from './actions/DuplicateAction';
 import StyledMenu from './components/StyledMenu';
 import useRequests from './hooks/useRequests';
 import { TablePageProps } from './TablePage.types';
@@ -193,50 +194,25 @@ const TablePage = <T extends BaseEntity>({
     );
   }, [actionConfig, handleAction]);
 
-  const duplicateAction = useCallback(
-    (row: MRT_Row<T>) => {
-      if (!row?.original?.id || !actionConfig?.duplicate) return;
+  // const duplicateAction = useCallback(
+  //   (row: MRT_Row<T>) => {
+  //     if (!row?.original?.id || !actionConfig?.duplicate) return;
 
-      const duplicateConfig = actionConfig?.duplicate;
+  //     const duplicateConfig = actionConfig?.duplicate;
 
-      return (
-        <MenuItem
-          onClick={() => {
-            handleAction(duplicateConfig, row.original);
-          }}
-        >
-          <FileCopy />
-          Duplicate
-        </MenuItem>
-      );
-    },
-    [actionConfig, handleAction]
-  );
-
-  // const handleBulkDelete = (table: MRT_TableInstance<T>) => {
-  //   const rowIds = table.getSelectedRowModel().flatRows.map((row) => row.original.id);
-  //   const rowTitles = table
-  //     .getSelectedRowModel()
-  //     .flatRows.map((row) => (row.original.title ?? row.original.name ?? row.original.id) as Key);
-
-  //   openConfirmationDialog({
-  //     title: 'Bulk Delete',
-  //     content: (
-  //       <>
-  //         Are you sure you want to delete these records?
-  //         <ul>
-  //           {rowTitles.map((title) => (
-  //             <li key={title}>{String(title)}</li>
-  //           ))}
-  //         </ul>
-  //       </>
-  //     ),
-  //     onConfirm: async () => {
-  //       await bulkDeleteMutation.mutateAsync(rowIds);
-  //       table.setRowSelection([] as any);
-  //     },
-  //   });
-  // };
+  //     return (
+  //       <MenuItem
+  //         onClick={() => {
+  //           handleAction(duplicateConfig, row.original);
+  //         }}
+  //       >
+  //         <FileCopy />
+  //         Duplicate
+  //       </MenuItem>
+  //     );
+  //   },
+  //   [actionConfig, handleAction]
+  // );
 
   useEffect(() => {
     if (data?.data) {
@@ -328,7 +304,14 @@ const TablePage = <T extends BaseEntity>({
                 open={moreMenuOpen}
                 onClose={handleMoreMenuClose}
               >
-                {selectedRow && duplicateAction(selectedRow)}
+                {/* {selectedRow && duplicateAction(selectedRow)} */}
+                {selectedRow && (
+                  <DuplicateAction
+                    row={selectedRow as unknown as MRT_Row<BaseEntity>}
+                    actionConfig={actionConfig}
+                    handleAction={handleAction}
+                  />
+                )}
                 <Divider sx={{ my: 0.5 }} />
                 {selectedRow && (
                   <DeleteAction
