@@ -24,6 +24,7 @@ import { BaseEntity } from '@/types/BaseEntity';
 import useConfirmationDialog from '@/hooks/useConfirmationDialog';
 import FormDialog from '@/components/FormDialog/FormDialog';
 
+import AddAction from './actions/AddAction';
 import BulkDeleteAction from './actions/BulkDeleteAction';
 import DeleteAction from './actions/DeleteAction';
 import DuplicateAction from './actions/DuplicateAction';
@@ -174,46 +175,6 @@ const TablePage = <T extends BaseEntity>({
     [actionConfig, handleAction]
   );
 
-  const addAction = useCallback(() => {
-    if (!actionConfig?.add) return;
-
-    const addConfig = actionConfig?.add;
-
-    return (
-      <Button
-        color="primary"
-        variant="contained"
-        startIcon={<Add />}
-        sx={{ ml: 2 }}
-        onClick={() => {
-          handleAction(addConfig);
-        }}
-      >
-        Add
-      </Button>
-    );
-  }, [actionConfig, handleAction]);
-
-  // const duplicateAction = useCallback(
-  //   (row: MRT_Row<T>) => {
-  //     if (!row?.original?.id || !actionConfig?.duplicate) return;
-
-  //     const duplicateConfig = actionConfig?.duplicate;
-
-  //     return (
-  //       <MenuItem
-  //         onClick={() => {
-  //           handleAction(duplicateConfig, row.original);
-  //         }}
-  //       >
-  //         <FileCopy />
-  //         Duplicate
-  //       </MenuItem>
-  //     );
-  //   },
-  //   [actionConfig, handleAction]
-  // );
-
   useEffect(() => {
     if (data?.data) {
       setTableData(data.data as T[]);
@@ -235,10 +196,10 @@ const TablePage = <T extends BaseEntity>({
             <RefreshIcon />
           </IconButton>
         </Tooltip>
-        {addAction()}
+        <AddAction actionConfig={actionConfig} handleAction={handleAction} />
       </>
     ),
-    [addAction, refetch]
+    [actionConfig, handleAction, refetch]
   );
 
   return (
