@@ -15,12 +15,12 @@ import {
   type MRT_ColumnFiltersState,
   type MRT_PaginationState,
   type MRT_Row,
+  type MRT_RowData,
   type MRT_SortingState,
   type MRT_TableInstance,
 } from 'material-react-table';
 
 import type { ApiResponse } from '@/types/api';
-import { BaseEntity } from '@/types/BaseEntity';
 import useConfirmationDialog from '@/hooks/useConfirmationDialog';
 import FormDialog from '@/components/FormDialog/FormDialog';
 
@@ -47,7 +47,7 @@ const theme = createTheme({
   },
 });
 
-const TablePage = <T extends BaseEntity>({
+const TablePage = <T extends MRT_RowData>({
   columns,
   actionConfig,
   defaultSorting = [],
@@ -223,11 +223,7 @@ const TablePage = <T extends BaseEntity>({
           renderRowActions={({ row }) => (
             <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
               {row && (
-                <EditAction
-                  row={row as unknown as MRT_Row<BaseEntity>}
-                  actionConfig={actionConfig}
-                  handleAction={handleAction}
-                />
+                <EditAction row={row as MRT_Row<MRT_RowData>} actionConfig={actionConfig} handleAction={handleAction} />
               )}
               <IconButton
                 aria-label="more"
@@ -252,7 +248,7 @@ const TablePage = <T extends BaseEntity>({
               >
                 {selectedRow && (
                   <DuplicateAction
-                    row={selectedRow as unknown as MRT_Row<BaseEntity>}
+                    row={selectedRow as MRT_Row<MRT_RowData>}
                     actionConfig={actionConfig}
                     handleAction={handleAction}
                   />
@@ -260,7 +256,7 @@ const TablePage = <T extends BaseEntity>({
                 <Divider sx={{ my: 0.5 }} />
                 {selectedRow && (
                   <DeleteAction
-                    row={selectedRow as unknown as MRT_Row<BaseEntity>}
+                    row={selectedRow as MRT_Row<MRT_RowData>}
                     handleMoreMenuClose={handleMoreMenuClose}
                     actionConfig={actionConfig}
                     refetch={refetch}
@@ -290,7 +286,7 @@ const TablePage = <T extends BaseEntity>({
                 <Box>
                   <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                     <BulkDeleteAction
-                      table={table as unknown as MRT_TableInstance<BaseEntity>}
+                      table={table as unknown as MRT_TableInstance<MRT_RowData>}
                       actionConfig={actionConfig}
                       refetch={refetch}
                       openConfirmationDialog={openConfirmationDialog}

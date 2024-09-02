@@ -1,19 +1,17 @@
 import React from 'react';
 import { Add, Edit } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
-import { type MRT_Row } from 'material-react-table';
-
-import { BaseEntity } from '@/types/BaseEntity';
+import { type MRT_Row, type MRT_RowData } from 'material-react-table';
 
 import { TableActionConfig } from '../TablePage.types';
 
-interface EditActionProps<T extends BaseEntity> {
+interface EditActionProps<T extends MRT_RowData> {
   row: MRT_Row<T>;
   actionConfig: { [key: string]: TableActionConfig };
   handleAction: any;
 }
 
-const EditAction = <T extends BaseEntity>({ row, actionConfig, handleAction }: EditActionProps<T>) => {
+const EditAction = <T extends MRT_RowData>({ row, actionConfig, handleAction }: EditActionProps<T>) => {
   if (!row?.original?.id || !actionConfig?.edit) return;
 
   const editConfig = actionConfig?.edit;

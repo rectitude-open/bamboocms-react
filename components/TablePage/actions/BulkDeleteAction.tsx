@@ -3,8 +3,6 @@ import { Delete } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { type MRT_RowData, type MRT_TableInstance } from 'material-react-table';
 
-import { BaseEntity } from '@/types/BaseEntity';
-
 import useRequests from '../hooks/useRequests';
 import { TableActionConfig } from '../TablePage.types';
 
@@ -16,7 +14,7 @@ interface BulkDeleteActionProps<T extends MRT_RowData> {
   openConfirmationDialog: (props: { title: string; content: React.ReactNode; onConfirm: () => Promise<void> }) => void;
 }
 
-const BulkDeleteAction = <T extends BaseEntity>({
+const BulkDeleteAction = <T extends MRT_RowData>({
   table,
   actionConfig,
   refetch,

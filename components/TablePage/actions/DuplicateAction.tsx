@@ -1,19 +1,17 @@
 import React from 'react';
 import { Delete, FileCopy } from '@mui/icons-material';
 import { MenuItem } from '@mui/material';
-import { type MRT_Row } from 'material-react-table';
-
-import { BaseEntity } from '@/types/BaseEntity';
+import { type MRT_Row, type MRT_RowData } from 'material-react-table';
 
 import { TableActionConfig } from '../TablePage.types';
 
-interface DuplicateActionProps<T extends BaseEntity> {
+interface DuplicateActionProps<T extends MRT_RowData> {
   row: MRT_Row<T>;
   actionConfig: { [key: string]: TableActionConfig };
   handleAction: any;
 }
 
-const DuplicateAction = <T extends BaseEntity>({ row, actionConfig, handleAction }: DuplicateActionProps<T>) => {
+const DuplicateAction = <T extends MRT_RowData>({ row, actionConfig, handleAction }: DuplicateActionProps<T>) => {
   if (!row?.original?.id || !actionConfig?.duplicate) return;
 
   const duplicateConfig = actionConfig?.duplicate;

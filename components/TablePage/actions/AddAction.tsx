@@ -4,12 +4,12 @@ import { Button } from '@mui/material';
 
 import { TableActionConfig } from '../TablePage.types';
 
-interface DuplicateActionProps {
+interface AddActionProps {
   actionConfig: { [key: string]: TableActionConfig };
   handleAction: any;
 }
 
-const DuplicateAction = ({ actionConfig, handleAction }: DuplicateActionProps) => {
+const AddAction = ({ actionConfig, handleAction }: AddActionProps) => {
   if (!actionConfig?.add) return;
 
   const addConfig = actionConfig?.add;
@@ -30,4 +30,4 @@ const DuplicateAction = ({ actionConfig, handleAction }: DuplicateActionProps) =
   );
 };
 
-export default React.memo(DuplicateAction);
+export default React.memo(AddAction);

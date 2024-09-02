@@ -1,14 +1,12 @@
 import React from 'react';
 import { Delete } from '@mui/icons-material';
 import { MenuItem } from '@mui/material';
-import { type MRT_Row } from 'material-react-table';
-
-import { BaseEntity } from '@/types/BaseEntity';
+import { type MRT_Row, type MRT_RowData } from 'material-react-table';
 
 import useRequests from '../hooks/useRequests';
 import { TableActionConfig } from '../TablePage.types';
 
-interface DeleteActionProps<T extends BaseEntity> {
+interface DeleteActionProps<T extends MRT_RowData> {
   row: MRT_Row<T>;
   handleMoreMenuClose: () => void;
   actionConfig: { [key: string]: TableActionConfig };
@@ -16,7 +14,7 @@ interface DeleteActionProps<T extends BaseEntity> {
   openConfirmationDialog: (props: { title: string; content: string; onConfirm: () => Promise<void> }) => void;
 }
 
-const DeleteAction = <T extends BaseEntity>({
+const DeleteAction = <T extends MRT_RowData>({
   row,
   handleMoreMenuClose,
   actionConfig,

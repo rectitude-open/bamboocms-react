@@ -1,10 +1,9 @@
 import { type RJSFSchema, type UiSchema } from '@rjsf/utils';
-import { MRT_SortingState, type MRT_ColumnDef } from 'material-react-table';
+import { MRT_RowData, MRT_SortingState, type MRT_ColumnDef } from 'material-react-table';
 
-import { ViewService, type FetchService, type UpdateService } from '@/types/api';
-import { BaseEntity, UpdateEntity } from '@/types/BaseEntity';
+import { type FetchService } from '@/types/api';
 
-export interface TablePageProps<T extends BaseEntity> {
+export interface TablePageProps<T extends MRT_RowData> {
   actionConfig: { [key: string]: TableActionConfig };
   columns: MRT_ColumnDef<T>[];
   defaultSorting?: MRT_SortingState;
