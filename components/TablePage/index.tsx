@@ -24,6 +24,7 @@ import { BaseEntity } from '@/types/BaseEntity';
 import useConfirmationDialog from '@/hooks/useConfirmationDialog';
 import FormDialog from '@/components/FormDialog/FormDialog';
 
+import BulkDeleteAction from './actions/BulkDeleteAction';
 import DeleteAction from './actions/DeleteAction';
 import StyledMenu from './components/StyledMenu';
 import useRequests from './hooks/useRequests';
@@ -212,30 +213,30 @@ const TablePage = <T extends BaseEntity>({
     [actionConfig, handleAction]
   );
 
-  const handleBulkDelete = (table: MRT_TableInstance<T>) => {
-    const rowIds = table.getSelectedRowModel().flatRows.map((row) => row.original.id);
-    const rowTitles = table
-      .getSelectedRowModel()
-      .flatRows.map((row) => (row.original.title ?? row.original.name ?? row.original.id) as Key);
+  // const handleBulkDelete = (table: MRT_TableInstance<T>) => {
+  //   const rowIds = table.getSelectedRowModel().flatRows.map((row) => row.original.id);
+  //   const rowTitles = table
+  //     .getSelectedRowModel()
+  //     .flatRows.map((row) => (row.original.title ?? row.original.name ?? row.original.id) as Key);
 
-    openConfirmationDialog({
-      title: 'Bulk Delete',
-      content: (
-        <>
-          Are you sure you want to delete these records?
-          <ul>
-            {rowTitles.map((title) => (
-              <li key={title}>{String(title)}</li>
-            ))}
-          </ul>
-        </>
-      ),
-      onConfirm: async () => {
-        await bulkDeleteMutation.mutateAsync(rowIds);
-        table.setRowSelection([] as any);
-      },
-    });
-  };
+  //   openConfirmationDialog({
+  //     title: 'Bulk Delete',
+  //     content: (
+  //       <>
+  //         Are you sure you want to delete these records?
+  //         <ul>
+  //           {rowTitles.map((title) => (
+  //             <li key={title}>{String(title)}</li>
+  //           ))}
+  //         </ul>
+  //       </>
+  //     ),
+  //     onConfirm: async () => {
+  //       await bulkDeleteMutation.mutateAsync(rowIds);
+  //       table.setRowSelection([] as any);
+  //     },
+  //   });
+  // };
 
   useEffect(() => {
     if (data?.data) {
@@ -360,15 +361,12 @@ const TablePage = <T extends BaseEntity>({
               >
                 <Box>
                   <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-                    <Button
-                      color="error"
-                      onClick={() => handleBulkDelete(table)}
-                      variant="contained"
-                      startIcon={<Delete />}
-                      disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-                    >
-                      Delete
-                    </Button>
+                    <BulkDeleteAction
+                      table={table as unknown as MRT_TableInstance<BaseEntity>}
+                      actionConfig={actionConfig}
+                      refetch={refetch}
+                      openConfirmationDialog={openConfirmationDialog}
+                    />
                   </Box>
                 </Box>
               </Box>
