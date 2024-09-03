@@ -3,6 +3,8 @@ import { Delete } from '@mui/icons-material';
 import { MenuItem } from '@mui/material';
 import { type MRT_Row, type MRT_RowData } from 'material-react-table';
 
+import { type OpenConfirmationDialog } from '@/hooks/useConfirmationDialog';
+
 import useRequests from '../hooks/useRequests';
 import { TableActionConfig } from '../TablePage.types';
 
@@ -11,7 +13,7 @@ interface DeleteActionProps<T extends MRT_RowData> {
   handleMoreMenuClose: () => void;
   actionConfig: { [key: string]: TableActionConfig };
   refetch: () => void;
-  openConfirmationDialog: (props: { title: string; content: string; onConfirm: () => Promise<void> }) => void;
+  openConfirmationDialog: OpenConfirmationDialog;
 }
 
 const DeleteAction = <T extends MRT_RowData>({
@@ -27,7 +29,6 @@ const DeleteAction = <T extends MRT_RowData>({
     <>
       <MenuItem
         onClick={() => {
-          console.log('DeleteAction', row.original.id);
           handleMoreMenuClose();
           openConfirmationDialog({
             title: `[ID: ${row.original.id}] ${row.original.title ?? row.original.name ?? ''}`,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   CircularProgress,
@@ -9,14 +9,21 @@ import {
   DialogTitle,
 } from '@mui/material';
 
+export type OpenConfirmationDialog = (props: OpenConfirmationDialogProps) => void;
+export interface OpenConfirmationDialogProps {
+  title: React.ReactNode;
+  content: React.ReactNode;
+  onConfirm: () => Promise<void>;
+}
+
 const useConfirmationDialog = () => {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState<React.ReactNode>('');
+  const [content, setContent] = useState<React.ReactNode>('');
   const [isLoading, setIsLoading] = useState(false);
-  const [onConfirmCallback, setOnConfirmCallback] = useState(() => {});
+  const [onConfirmCallback, setOnConfirmCallback] = useState<() => Promise<void>>(() => async () => {});
 
-  const handleOpen = ({ title, content, onConfirm }) => {
+  const handleOpen: OpenConfirmationDialog = ({ title, content, onConfirm }) => {
     setOpen(true);
     setTitle(title);
     setContent(content);
@@ -25,7 +32,6 @@ const useConfirmationDialog = () => {
       setIsLoading(true);
       try {
         await onConfirm();
-        // await new Promise((resolve) => setTimeout(resolve, 3000));
         setOpen(false);
       } catch (error) {
         console.error(error);

@@ -3,6 +3,8 @@ import { Delete } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { type MRT_RowData, type MRT_TableInstance } from 'material-react-table';
 
+import { type OpenConfirmationDialog } from '@/hooks/useConfirmationDialog';
+
 import useRequests from '../hooks/useRequests';
 import { TableActionConfig } from '../TablePage.types';
 
@@ -10,8 +12,7 @@ interface BulkDeleteActionProps<T extends MRT_RowData> {
   table: MRT_TableInstance<T>;
   actionConfig: { [key: string]: TableActionConfig };
   refetch: () => void;
-  // TODO: refactor types to useConfirmationDialog
-  openConfirmationDialog: (props: { title: string; content: React.ReactNode; onConfirm: () => Promise<void> }) => void;
+  openConfirmationDialog: OpenConfirmationDialog;
 }
 
 const BulkDeleteAction = <T extends MRT_RowData>({
