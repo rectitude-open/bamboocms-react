@@ -8,6 +8,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@mui/material';
+import type { DialogProps } from '@mui/material';
 
 export type OpenConfirmationDialog = (props: OpenConfirmationDialogProps) => void;
 export interface OpenConfirmationDialogProps {
@@ -41,6 +42,11 @@ const useConfirmationDialog = () => {
     });
   };
 
+  const handleDialogClose: DialogProps['onClose'] = (event, reason) => {
+    if (reason && reason === 'backdropClick') return;
+    handleClose();
+  };
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -52,7 +58,7 @@ const useConfirmationDialog = () => {
   const ConfirmationDialog = (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={handleDialogClose}
       aria-labelledby="confirmation-dialog-title"
       aria-describedby="confirmation-dialog-description"
     >

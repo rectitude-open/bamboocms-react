@@ -11,6 +11,7 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
+import type { DialogProps } from '@mui/material';
 import Form, { withTheme } from '@rjsf/core';
 import { Theme } from '@rjsf/mui';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
@@ -66,12 +67,17 @@ const BaseDialog = <T extends Record<string, unknown>>({
     };
   }, [open, resetFormData]);
 
-  function handleDialogClose() {
+  const handleResetAndClose = useCallback(() => {
     resetFormData();
     if (!submitLoading) {
       handleClose();
     }
-  }
+  }, [handleClose, resetFormData, submitLoading]);
+
+  const handleDialogClose: DialogProps['onClose'] = (event, reason) => {
+    if (reason && reason === 'backdropClick') return;
+    handleResetAndClose();
+  };
 
   return (
     <Dialog key={dialogKey} open={open} onClose={handleDialogClose} fullWidth maxWidth="sm" disableEscapeKeyDown>
@@ -86,7 +92,7 @@ const BaseDialog = <T extends Record<string, unknown>>({
             <Typography fontSize="1.2rem">{title}</Typography>
             <IconButton
               aria-label="close"
-              onClick={handleDialogClose}
+              onClick={handleResetAndClose}
               sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
               disabled={submitLoading}
             >
@@ -109,7 +115,7 @@ const BaseDialog = <T extends Record<string, unknown>>({
           </DialogContent>
 
           <DialogActions>
-            <Button onClick={handleDialogClose} color="secondary" disabled={submitLoading}>
+            <Button onClick={handleResetAndClose} color="secondary" disabled={submitLoading}>
               Cancel
             </Button>
             <Button
