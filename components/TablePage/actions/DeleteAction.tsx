@@ -11,7 +11,7 @@ import { TableActionConfig } from '../TablePage.types';
 interface DeleteActionProps<T extends MRT_RowData> {
   row: MRT_Row<T>;
   handleMoreMenuClose: () => void;
-  actionConfig: { [key: string]: TableActionConfig };
+  actionConfig: TableActionConfig<T>;
   refetch: () => void;
   openConfirmationDialog: OpenConfirmationDialog;
 }
@@ -46,4 +46,4 @@ const DeleteAction = <T extends MRT_RowData>({
   );
 };
 
-export default React.memo(DeleteAction);
+export default React.memo(DeleteAction) as typeof DeleteAction;

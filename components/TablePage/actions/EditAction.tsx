@@ -7,7 +7,7 @@ import { TableActionConfig } from '../TablePage.types';
 
 interface EditActionProps<T extends MRT_RowData> {
   row: MRT_Row<T>;
-  actionConfig: { [key: string]: TableActionConfig };
+  actionConfig: TableActionConfig<T>;
   handleAction: any;
 }
 
@@ -30,4 +30,4 @@ const EditAction = <T extends MRT_RowData>({ row, actionConfig, handleAction }: 
   );
 };
 
-export default React.memo(EditAction);
+export default React.memo(EditAction) as typeof EditAction;

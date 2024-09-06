@@ -30,7 +30,6 @@ import DeleteAction from './actions/DeleteAction';
 import DuplicateAction from './actions/DuplicateAction';
 import EditAction from './actions/EditAction';
 import StyledMenu from './components/StyledMenu';
-import useRequests from './hooks/useRequests';
 import { TablePageProps } from './TablePage.types';
 
 const theme = createTheme({
@@ -222,9 +221,7 @@ const TablePage = <T extends MRT_RowData>({
           positionActionsColumn="last"
           renderRowActions={({ row }) => (
             <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-              {row && (
-                <EditAction row={row as MRT_Row<MRT_RowData>} actionConfig={actionConfig} handleAction={handleAction} />
-              )}
+              {row && <EditAction row={row} actionConfig={actionConfig} handleAction={handleAction} />}
               <IconButton
                 aria-label="more"
                 id="more-button"
@@ -247,16 +244,12 @@ const TablePage = <T extends MRT_RowData>({
                 onClose={handleMoreMenuClose}
               >
                 {selectedRow && (
-                  <DuplicateAction
-                    row={selectedRow as MRT_Row<MRT_RowData>}
-                    actionConfig={actionConfig}
-                    handleAction={handleAction}
-                  />
+                  <DuplicateAction row={selectedRow} actionConfig={actionConfig} handleAction={handleAction} />
                 )}
                 <Divider sx={{ my: 0.5 }} />
                 {selectedRow && (
                   <DeleteAction
-                    row={selectedRow as MRT_Row<MRT_RowData>}
+                    row={selectedRow}
                     handleMoreMenuClose={handleMoreMenuClose}
                     actionConfig={actionConfig}
                     refetch={refetch}
@@ -286,7 +279,7 @@ const TablePage = <T extends MRT_RowData>({
                 <Box>
                   <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                     <BulkDeleteAction
-                      table={table as unknown as MRT_TableInstance<MRT_RowData>}
+                      table={table}
                       actionConfig={actionConfig}
                       refetch={refetch}
                       openConfirmationDialog={openConfirmationDialog}

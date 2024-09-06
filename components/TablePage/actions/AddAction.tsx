@@ -4,12 +4,12 @@ import { Button } from '@mui/material';
 
 import { TableActionConfig } from '../TablePage.types';
 
-interface AddActionProps {
-  actionConfig: { [key: string]: TableActionConfig };
+interface AddActionProps<T> {
+  actionConfig: TableActionConfig<T>;
   handleAction: any;
 }
 
-const AddAction = ({ actionConfig, handleAction }: AddActionProps) => {
+const AddAction = <T,>({ actionConfig, handleAction }: AddActionProps<T>) => {
   if (!actionConfig?.add) return;
 
   const addConfig = actionConfig?.add;
@@ -30,4 +30,4 @@ const AddAction = ({ actionConfig, handleAction }: AddActionProps) => {
   );
 };
 
-export default React.memo(AddAction);
+export default React.memo(AddAction) as typeof AddAction;

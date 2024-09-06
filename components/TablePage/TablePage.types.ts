@@ -4,32 +4,32 @@ import { MRT_RowData, MRT_SortingState, type MRT_ColumnDef } from 'material-reac
 import { type FetchService } from '@/types/api';
 
 export interface TablePageProps<T extends MRT_RowData> {
-  actionConfig: { [key: string]: TableActionConfig };
+  actionConfig: TableActionConfig<T>;
   columns: MRT_ColumnDef<T>[];
   defaultSorting?: MRT_SortingState;
   tableService: FetchService;
 }
 
-export interface ActionConfig {
+export interface ActionConfig<T> {
   title?: string;
   formType: 'action';
   submitService: (data: any) => Promise<any>;
 }
 
-export interface DialogConfig {
+export interface DialogConfig<T> {
   title?: string;
   formType: 'dialog';
   initService?: (data: any) => Promise<any>;
   submitService: (data: any) => Promise<any>;
   schema: RJSFSchema;
-  uiSchema: UiSchema;
+  uiSchema: UiSchema<T>;
 }
 
-export interface PageConfig {
+export interface PageConfig<T> {
   title?: string;
   formType: 'page';
   url: string;
   params: string[];
 }
 
-export type TableActionConfig = ActionConfig | PageConfig | DialogConfig;
+export type TableActionConfig<T> = { [key: string]: ActionConfig<T> | PageConfig<T> | DialogConfig<T> };

@@ -6,31 +6,23 @@ import { ArrowLeft, KeyboardBackspace } from '@mui/icons-material';
 import { Alert, Box, Button, CircularProgress, Container, Paper, Typography } from '@mui/material';
 import { withTheme, type IChangeEvent } from '@rjsf/core';
 import { Theme } from '@rjsf/mui';
-import { RJSFSchema } from '@rjsf/utils';
-import validator from '@rjsf/validator-ajv8';
+import { customizeValidator } from '@rjsf/validator-ajv8';
 import { useMutation } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
-import { commonSchema, commonUiSchema } from '../schemas/CommonFormSchemas';
+import { schema, uiSchema } from '../schemas';
 import { create } from '../services';
+import { Role } from '../types';
 
-const schema: RJSFSchema = commonSchema;
-const uiSchema = commonUiSchema;
-
-type FormData = {
-  name: string;
-  description: string;
-};
-
-const Form = withTheme<FormData>(Theme);
-
+const Form = withTheme<Role>(Theme);
+const validator = customizeValidator<Role>();
 const onError = (errors: any) => console.log(errors);
 
 const Add = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
-  const [formData, setFormData] = useState<FormData>();
+  const [formData, setFormData] = useState<Role>();
   const router = useRouter();
 
   const mutation = useMutation({
@@ -50,7 +42,7 @@ const Add = () => {
     },
   });
 
-  const onSubmit = async ({ formData }: IChangeEvent<FormData>, e: any) => {
+  const onSubmit = async ({ formData }: IChangeEvent<Role>, e: any) => {
     mutation.mutate(formData);
   };
 

@@ -10,7 +10,7 @@ import { TableActionConfig } from '../TablePage.types';
 
 interface BulkDeleteActionProps<T extends MRT_RowData> {
   table: MRT_TableInstance<T>;
-  actionConfig: { [key: string]: TableActionConfig };
+  actionConfig: TableActionConfig<T>;
   refetch: () => void;
   openConfirmationDialog: OpenConfirmationDialog;
 }
@@ -61,4 +61,4 @@ const BulkDeleteAction = <T extends MRT_RowData>({
   );
 };
 
-export default BulkDeleteAction;
+export default BulkDeleteAction as typeof BulkDeleteAction;

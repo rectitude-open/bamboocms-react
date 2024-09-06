@@ -7,7 +7,7 @@ import { TableActionConfig } from '../TablePage.types';
 
 interface DuplicateActionProps<T extends MRT_RowData> {
   row: MRT_Row<T>;
-  actionConfig: { [key: string]: TableActionConfig };
+  actionConfig: TableActionConfig<T>;
   handleAction: any;
 }
 
@@ -29,4 +29,4 @@ const DuplicateAction = <T extends MRT_RowData>({ row, actionConfig, handleActio
   );
 };
 
-export default React.memo(DuplicateAction);
+export default React.memo(DuplicateAction) as typeof DuplicateAction;
