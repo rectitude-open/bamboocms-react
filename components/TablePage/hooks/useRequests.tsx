@@ -4,9 +4,9 @@ import { useSnackbar } from 'notistack';
 
 import { ActionConfig, TableActionConfig } from '../TablePage.types';
 
-const useRequests = (actionConfig: { [key: string]: TableActionConfig }, refetch: any) => {
+const useRequests = <T,>(actionConfig: TableActionConfig<T>, refetch: any) => {
   const { enqueueSnackbar } = useSnackbar();
-  const config = _.cloneDeep(actionConfig) as { [key: string]: ActionConfig };
+  const config = _.cloneDeep(actionConfig) as { [key: string]: ActionConfig<T> };
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {

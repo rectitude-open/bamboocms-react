@@ -23,7 +23,7 @@ const DeleteAction = <T extends MRT_RowData>({
   refetch,
   openConfirmationDialog,
 }: DeleteActionProps<T>) => {
-  const { deleteMutation } = useRequests(actionConfig, refetch);
+  const { deleteMutation } = useRequests<T>(actionConfig, refetch);
 
   return (
     <>
