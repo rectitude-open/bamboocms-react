@@ -1,5 +1,5 @@
 import React from 'react';
-import { Delete, FileCopy } from '@mui/icons-material';
+import { FileCopy } from '@mui/icons-material';
 import { MenuItem } from '@mui/material';
 import { type MRT_Row, type MRT_RowData } from 'material-react-table';
 

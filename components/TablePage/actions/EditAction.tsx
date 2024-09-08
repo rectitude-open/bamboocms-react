@@ -1,6 +1,6 @@
 import React from 'react';
-import { Add, Edit } from '@mui/icons-material';
-import { Button, IconButton } from '@mui/material';
+import { Edit } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 import { type MRT_Row, type MRT_RowData } from 'material-react-table';
 
 import { TableActionConfig } from '../TablePage.types';
