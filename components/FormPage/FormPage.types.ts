@@ -5,4 +5,5 @@ export interface FormPageProps {
     initService?: (data: any) => Promise<any>;
     submitService?: (data: any) => Promise<any>;
   };
+  requiredParams?: string[];
 }

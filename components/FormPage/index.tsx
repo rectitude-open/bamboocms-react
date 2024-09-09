@@ -16,7 +16,12 @@ import type { FormPageProps } from './FormPage.types';
 
 const onError = (errors: any) => console.log(errors);
 
-const FormPage = <T,>({ schema, uiSchema, services: { initService, submitService } }: FormPageProps) => {
+const FormPage = <T,>({
+  schema,
+  uiSchema,
+  services: { initService, submitService },
+  requiredParams = [],
+}: FormPageProps) => {
   const Form = useMemo(() => withTheme<T>(Theme), []);
   const validator = useMemo(() => customizeValidator<T>(), []);
 
@@ -26,16 +31,18 @@ const FormPage = <T,>({ schema, uiSchema, services: { initService, submitService
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [formData, setFormData] = useState<T>();
   const router = useRouter();
-
-  const id = searchParams.get('id');
-
+  const [missingParams, setMissingParams] = useState<string[]>([]);
+  const requiredParamsMap: Record<string, string | null> = useMemo(
+    () => requiredParams.reduce((acc, param) => ({ ...acc, [param]: searchParams.get(param) }), {}),
+    [searchParams]
+  );
   const { data, isError, isLoading } = useQuery<ApiResponse<T>>({
-    queryKey: ['edit', id],
+    queryKey: ['edit', requiredParamsMap],
     queryFn: async () => {
-      const response = await initService!(Number(id));
+      const response = await initService!(requiredParamsMap);
       return response;
     },
-    enabled: !!id && !!initService,
+    enabled: !!initService && requiredParams.every((param) => !!requiredParamsMap[param]),
   });
 
   useEffect(() => {
@@ -43,6 +50,11 @@ const FormPage = <T,>({ schema, uiSchema, services: { initService, submitService
       setFormData(data.data as T);
     }
   }, [data]);
+
+  useEffect(() => {
+    const missingParams = requiredParams.filter((param) => !requiredParamsMap[param]);
+    setMissingParams(missingParams);
+  }, [requiredParamsMap, requiredParams]);
 
   const mutation = useMutation({
     mutationFn: submitService,
@@ -61,14 +73,10 @@ const FormPage = <T,>({ schema, uiSchema, services: { initService, submitService
     },
   });
 
-  const onSubmit = ({ formData }: IChangeEvent<T>, e: any) => mutation.mutate({ ...formData, id: Number(id) });
+  const onSubmit = ({ formData }: IChangeEvent<T>, e: any) => mutation.mutate({ ...formData, ...requiredParamsMap });
 
-  if (!id) {
-    return <Alert severity="error">Invalid ID</Alert>;
-  }
-
-  if (isError) {
-    return <Alert severity="error">Error fetching data</Alert>;
+  if (missingParams.length) {
+    return <Alert severity="error">Missing required parameters: {missingParams.join(',')}</Alert>;
   }
 
   return (
