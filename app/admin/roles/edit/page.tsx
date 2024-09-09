@@ -16,6 +16,7 @@ const Page = () => {
           initService: view,
           submitService: update,
         }}
+        requiredParams={['id']}
       />
     </div>
   );

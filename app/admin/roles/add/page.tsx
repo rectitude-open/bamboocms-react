@@ -1,92 +1,23 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, KeyboardBackspace } from '@mui/icons-material';
-import { Alert, Box, Button, CircularProgress, Container, Paper, Typography } from '@mui/material';
-import { withTheme, type IChangeEvent } from '@rjsf/core';
-import { Theme } from '@rjsf/mui';
-import { customizeValidator } from '@rjsf/validator-ajv8';
-import { useMutation } from '@tanstack/react-query';
-import { useSnackbar } from 'notistack';
+import FormPage from '@/components/FormPage';
 
 import { schema, uiSchema } from '../schemas';
-import { create } from '../services';
+import { create, view } from '../services';
 import { Role } from '../types';
 
-const Form = withTheme<Role>(Theme);
-const validator = customizeValidator<Role>();
-const onError = (errors: any) => console.log(errors);
-
-const Add = () => {
-  const { enqueueSnackbar } = useSnackbar();
-  const [loading, setLoading] = useState(false);
-  const [disableSubmit, setDisableSubmit] = useState(false);
-  const [formData, setFormData] = useState<Role>();
-  const router = useRouter();
-
-  const mutation = useMutation({
-    mutationFn: create,
-    onMutate: () => {
-      setLoading(true);
-      setDisableSubmit(true);
-    },
-    onSuccess: (data) => {
-      setLoading(false);
-      enqueueSnackbar(data.message || 'Role added successfully!', { variant: 'success' });
-      setDisableSubmit(false);
-    },
-    onError: () => {
-      setLoading(false);
-      setDisableSubmit(false);
-    },
-  });
-
-  const onSubmit = async ({ formData }: IChangeEvent<Role>, e: any) => {
-    mutation.mutate(formData);
-  };
-
+const Page = () => {
   return (
-    <Container maxWidth="xl">
-      <Box>
-        <Button
-          variant="text"
-          startIcon={<KeyboardBackspace />}
-          sx={{ p: 0 }}
-          onClick={() => router.push('/dashboard/roles')}
-        >
-          Roles
-        </Button>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ py: 2 }}>
-          Add Role
-        </Typography>
-        <Paper variant="outlined" elevation={3} sx={{ p: 3, pt: 1 }}>
-          <Form
-            schema={schema}
-            uiSchema={uiSchema}
-            validator={validator}
-            onSubmit={onSubmit}
-            onError={onError}
-            disabled={loading}
-            formData={formData}
-            onChange={(e) => e.formData && setFormData(e.formData)}
-          >
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={disableSubmit}
-                startIcon={loading ? <CircularProgress size={20} /> : null}
-              >
-                {loading ? 'Loading...' : 'Submit'}
-              </Button>
-            </Box>
-          </Form>
-        </Paper>
-      </Box>
-    </Container>
+    <div>
+      <FormPage<Role>
+        schema={schema}
+        uiSchema={uiSchema}
+        services={{
+          submitService: create,
+        }}
+      />
+    </div>
   );
 };
 
-export default Add;
+export default Page;

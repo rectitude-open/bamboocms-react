@@ -16,8 +16,8 @@ export const create = async (data: CreateRole = {}) => {
   return response.data;
 };
 
-export const view: ViewService = async (id: number) => {
-  const response = await axiosInstance.get(`/admin/administrator-roles/${id}`);
+export const view: ViewService = async (data) => {
+  const response = await axiosInstance.get(`/admin/administrator-roles/${data.id}`);
   return response.data;
 };
 

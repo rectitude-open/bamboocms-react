@@ -66,12 +66,17 @@ const RoleTable = () => {
 
   const tableActionConfig: TableActionConfig<Role> = {
     add: {
-      title: 'Add Role',
-      submitService: services.create,
-      formType: 'dialog',
-      schema,
-      uiSchema,
+      formType: 'page',
+      url: '/admin/roles/add',
+      params: [],
     },
+    // add: {
+    //   title: 'Add Role',
+    //   submitService: services.create,
+    //   formType: 'dialog',
+    //   schema,
+    //   uiSchema,
+    // },
     edit: {
       formType: 'page',
       url: '/admin/roles/edit',
