@@ -11,6 +11,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
 import type { ApiResponse } from '@/types/api';
+import useRequiredParams from '@/hooks/useRequiredParams';
 
 import type { FormPageProps } from './FormPage.types';
 
@@ -24,18 +25,13 @@ const FormPage = <T,>({
 }: FormPageProps) => {
   const Form = useMemo(() => withTheme<T>(Theme), []);
   const validator = useMemo(() => customizeValidator<T>(), []);
+  const { requiredParamsMap, hasMissingParams, missingParamsAlert } = useRequiredParams(requiredParams);
 
-  const searchParams = useSearchParams();
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [formData, setFormData] = useState<T>();
   const router = useRouter();
-  const [missingParams, setMissingParams] = useState<string[]>([]);
-  const requiredParamsMap: Record<string, string | null> = useMemo(
-    () => requiredParams.reduce((acc, param) => ({ ...acc, [param]: searchParams.get(param) }), {}),
-    [searchParams]
-  );
   const { data, isError, isLoading } = useQuery<ApiResponse<T>>({
     queryKey: ['edit', requiredParamsMap],
     queryFn: async () => {
@@ -50,11 +46,6 @@ const FormPage = <T,>({
       setFormData(data.data as T);
     }
   }, [data]);
-
-  useEffect(() => {
-    const missingParams = requiredParams.filter((param) => !requiredParamsMap[param]);
-    setMissingParams(missingParams);
-  }, [requiredParamsMap, requiredParams]);
 
   const mutation = useMutation({
     mutationFn: submitService,
@@ -75,8 +66,8 @@ const FormPage = <T,>({
 
   const onSubmit = ({ formData }: IChangeEvent<T>, e: any) => mutation.mutate({ ...formData, ...requiredParamsMap });
 
-  if (missingParams.length) {
-    return <Alert severity="error">Missing required parameters: {missingParams.join(',')}</Alert>;
+  if (hasMissingParams) {
+    return missingParamsAlert;
   }
 
   return (
