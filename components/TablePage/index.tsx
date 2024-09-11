@@ -60,12 +60,17 @@ const TablePage = <T extends MRT_RowData>({
     pageSize: 10,
   });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [id, setId] = useState<number | undefined>();
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState('');
-  const [dialogSchema, setDialogSchema] = useState<RJSFSchema>();
-  const [dialogUiSchema, setDialogUiSchema] = useState<UiSchema>();
-  const [dialogServices, setDialogServices] = useState({});
+  const [dialogState, setDialogState] = useState({
+    open: false,
+    title: '',
+    schema: {} as RJSFSchema,
+    uiSchema: {} as UiSchema,
+    services: {},
+    requiredParams: [] as string[],
+    row: {} as T,
+  });
+
   const router = useRouter();
   const [tableData, setTableData] = useState<T[]>([]);
   const [selectedRow, setSelectedRow] = useState<MRT_Row<T> | undefined>();
@@ -108,21 +113,9 @@ const TablePage = <T extends MRT_RowData>({
     refetch();
   }, [refetch]);
 
-  const formDialog = useMemo(
-    () => (
-      <FormDialog
-        open={openDialog}
-        handleClose={handleCloseDialog}
-        title={dialogTitle}
-        id={id!}
-        services={dialogServices}
-        schema={dialogSchema!}
-        uiSchema={dialogUiSchema!}
-        onSubmitSuccess={handleSubmitSuccess}
-      />
-    ),
-    [openDialog, id, dialogTitle, dialogServices, handleSubmitSuccess, dialogSchema, dialogUiSchema, handleCloseDialog]
-  );
+  const formDialog = openDialog ? (
+    <FormDialog {...dialogState} handleClose={handleCloseDialog} onSubmitSuccess={handleSubmitSuccess} />
+  ) : null;
 
   const handleAction = useCallback(
     (config: any, record: any = {}) => {
@@ -130,14 +123,15 @@ const TablePage = <T extends MRT_RowData>({
       switch (formType) {
         case 'dialog':
           {
-            setDialogTitle(config?.title ?? 'Edit');
-            setDialogServices({
-              initService: config.initService,
-              submitService: config.submitService,
+            setDialogState({
+              open: true,
+              title: config?.title ?? 'Edit',
+              schema: config?.schema,
+              uiSchema: config?.uiSchema,
+              services: config?.services,
+              requiredParams: config?.requiredParams ?? [],
+              row: record,
             });
-            config?.schema && setDialogSchema(config.schema);
-            config?.uiSchema && setDialogUiSchema(config.uiSchema);
-            setId(record?.id ?? 0);
             setOpenDialog(true);
             handleMoreMenuClose();
           }
