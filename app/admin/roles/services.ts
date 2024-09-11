@@ -21,10 +21,13 @@ export const view: ViewService = async (data) => {
   return response.data;
 };
 
-export const update: UpdateService<UpdateRole> = async (payload) => {
-  const { id, ...data } = payload;
-  const response = await axiosInstance.put(`/admin/administrator-roles/${id}`, data);
-  return response.data;
+export const update: UpdateService<UpdateRole> = async (data, params) => {
+  if (params.id) {
+    const response = await axiosInstance.put(`/admin/administrator-roles/${params.id}`, data);
+    return response.data;
+  } else {
+    throw new Error('Missing required params');
+  }
 };
 
 export const destroy = async (id: number) => {

@@ -13,16 +13,21 @@ export interface TablePageProps<T extends MRT_RowData> {
 export interface ActionConfig<T> {
   title?: string;
   formType: 'action';
-  submitService: (data: any) => Promise<any>;
+  services: {
+    submitService: (data: any) => Promise<any>;
+  };
 }
 
 export interface DialogConfig<T> {
   title?: string;
   formType: 'dialog';
-  initService?: (data: any) => Promise<any>;
-  submitService: (data: any) => Promise<any>;
+  services: {
+    initService?: (data: any) => Promise<any>;
+    submitService: (data: any, params: any) => Promise<any>;
+  };
   schema: RJSFSchema;
   uiSchema: UiSchema<T>;
+  requiredParams?: string[];
 }
 
 export interface PageConfig<T> {

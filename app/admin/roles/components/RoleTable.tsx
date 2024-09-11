@@ -65,45 +65,56 @@ const RoleTable = () => {
   ];
 
   const tableActionConfig: TableActionConfig<Role> = {
-    add: {
-      formType: 'page',
-      url: '/admin/roles/add',
-      params: [],
-    },
     // add: {
-    //   title: 'Add Role',
-    //   submitService: services.create,
-    //   formType: 'dialog',
-    //   schema,
-    //   uiSchema,
+    //   formType: 'page',
+    //   url: '/admin/roles/add',
+    //   params: [],
     // },
-    edit: {
-      formType: 'page',
-      url: '/admin/roles/edit',
-      params: ['id'],
+    add: {
+      title: 'Add Role',
+      services: {
+        submitService: services.create,
+      },
+      formType: 'dialog',
+      schema,
+      uiSchema,
     },
     // edit: {
-    //   title: 'Update Role',
-    //   initService: services.view,
-    //   submitService: services.update,
-    //   formType: 'dialog',
-    //   schema,
-    //   uiSchema,
+    //   formType: 'page',
+    //   url: '/admin/roles/edit',
+    //   params: ['id'],
     // },
+    edit: {
+      title: 'Update Role',
+      services: {
+        initService: services.view,
+        submitService: services.update,
+      },
+      formType: 'dialog',
+      schema,
+      uiSchema,
+      requiredParams: ['id'],
+    },
     duplicate: {
       title: 'Duplicate Role',
-      initService: services.view,
-      submitService: services.create,
+      services: {
+        initService: services.view,
+        submitService: services.create,
+      },
       formType: 'dialog',
       schema,
       uiSchema,
     },
     delete: {
-      submitService: services.destroy,
+      services: {
+        submitService: services.destroy,
+      },
       formType: 'action',
     },
     bulkDelete: {
-      submitService: services.bulkDestroy,
+      services: {
+        submitService: services.bulkDestroy,
+      },
       formType: 'action',
     },
   };

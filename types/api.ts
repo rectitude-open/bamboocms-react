@@ -11,5 +11,5 @@ export interface ApiResponse<T = Record<string, unknown> | Record<string, unknow
 }
 
 export type FetchService = (params: Record<string, unknown>, config?: AxiosRequestConfig) => Promise<any>;
-export type UpdateService<T = Record<string, unknown>> = (payload: T) => Promise<any>;
+export type UpdateService<T = Record<string, unknown>> = (data: T, params: Record<string, unknown>) => Promise<any>;
 export type ViewService = (data: { id: number; [key: string]: unknown }) => Promise<any>;
