@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
 import { ApiResponse } from '@/types/api';
+import useRequiredParams from '@/hooks/useRequiredParams';
 
 import BaseDialog from './BaseDialog';
 
@@ -11,44 +12,53 @@ interface FormDialogProps<T> {
   title: string;
   open: boolean;
   handleClose: () => void;
-  id: number;
   services: {
     initService?: (data: any) => Promise<any>;
-    submitService?: (data: any) => Promise<any>;
+    submitService?: (data: any, params: any) => Promise<any>;
   };
   schema: RJSFSchema;
   uiSchema: UiSchema;
   onSubmitSuccess?: () => void;
+  requiredParams?: string[];
+  row: T;
 }
 
 const FormDialog = <T extends Record<string, unknown>>({
   title,
   open,
   handleClose,
-  id,
   services: { initService, submitService },
   schema,
   uiSchema,
+  requiredParams = [],
   onSubmitSuccess = () => {},
+  row = {} as T,
 }: FormDialogProps<T>) => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [initialFormData, setInitialFormData] = useState<any>({});
+  const { requiredParamsMap, hasMissingParams } = useRequiredParams<T>({
+    requiredParams,
+    row,
+  });
 
-  const queryKey = useMemo(() => ['view-form', id], [id]);
+  const queryKey = useMemo(() => ['view-form', requiredParamsMap], [requiredParamsMap]);
 
   const { data, isError, isLoading, isRefetching } = useQuery<ApiResponse>({
     queryKey: queryKey,
     queryFn: async () => {
-      const response = await initService!(Number(id));
+      const response = await initService!(requiredParamsMap);
       return response;
     },
-    enabled: !!initService && !!id && open,
+    enabled: !!initService && open && !hasMissingParams,
   });
 
   const mutation = useMutation({
-    mutationFn: submitService,
+    mutationFn: async (payload: any) => {
+      const response = await submitService!(payload.data, payload.params);
+      return response;
+    },
     onMutate: () => {
       setSubmitLoading(true);
     },
@@ -83,9 +93,12 @@ const FormDialog = <T extends Record<string, unknown>>({
 
   const handleSubmit = useCallback(
     (formData: any) => {
-      mutation.mutate({ ...formData, id });
+      mutation.mutate({
+        data: formData,
+        params: requiredParamsMap,
+      });
     },
-    [id, mutation]
+    [requiredParamsMap, mutation]
   );
 
   return (
