@@ -10,7 +10,9 @@ const useRequests = <T,>(actionConfig: TableActionConfig<T>, refetch: any) => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return config?.delete?.submitService && (await config.delete.submitService(id));
+      if (config.delete?.services?.submitService) {
+        return await config.delete.services.submitService(id);
+      }
     },
     onSuccess: (data) => {
       enqueueSnackbar(data?.message ?? 'Delete successfully!', { variant: 'success' });
@@ -23,7 +25,9 @@ const useRequests = <T,>(actionConfig: TableActionConfig<T>, refetch: any) => {
 
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: number[]) => {
-      return config?.bulkDelete?.submitService && (await config.bulkDelete.submitService(ids));
+      if (config.bulkDelete?.services?.submitService) {
+        return await config.bulkDelete.services.submitService(ids);
+      }
     },
     onSuccess: (data) => {
       enqueueSnackbar(data?.message ?? 'Bulk Delete successfully!', { variant: 'success' });
