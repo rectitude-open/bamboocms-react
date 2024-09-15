@@ -104,6 +104,7 @@ const RoleTable = () => {
       formType: 'dialog',
       schema,
       uiSchema,
+      requiredParams: ['id'],
     },
     delete: {
       services: {
