@@ -3,7 +3,7 @@ export interface FormPageProps {
   uiSchema: any;
   services: {
     initService?: (data: any) => Promise<any>;
-    submitService?: (data: any) => Promise<any>;
+    submitService?: (data: any, params?: any) => Promise<any>;
   };
   requiredParams?: string[];
 }
