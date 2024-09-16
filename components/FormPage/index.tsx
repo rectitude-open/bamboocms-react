@@ -25,7 +25,13 @@ const FormPage = <T,>({
 }: FormPageProps) => {
   const Form = useMemo(() => withTheme<T>(Theme), []);
   const validator = useMemo(() => customizeValidator<T>(), []);
-  const { requiredParamsMap, hasMissingParams, missingParamsAlert } = useRequiredParams(requiredParams);
+  const searchParams = useSearchParams();
+  const searchParamEntires = useMemo(() => Array.from(searchParams), [searchParams]);
+  const paramsObject = useMemo(() => Object.fromEntries(searchParamEntires), [searchParamEntires]);
+  const { requiredParamsMap, hasMissingParams, missingParamsAlert } = useRequiredParams({
+    requiredParams,
+    row: paramsObject,
+  });
 
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);

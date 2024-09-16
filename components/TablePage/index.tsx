@@ -138,7 +138,9 @@ const TablePage = <T extends MRT_RowData>({
           break;
         case 'page':
           {
-            const queryString = (config?.params || []).map((param: string) => `${param}=${record[param]}`).join('&');
+            const queryString = (config?.requiredParams || [])
+              .map((param: string) => `${param}=${record[param]}`)
+              .join('&');
             router.push(`${config?.url}?${queryString}`);
           }
           break;

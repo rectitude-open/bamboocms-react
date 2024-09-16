@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { Alert } from '@mui/material';
 
 interface UseRequiredParamsProps<T> {
@@ -8,26 +7,26 @@ interface UseRequiredParamsProps<T> {
 }
 
 const useRequiredParams = <T extends Record<string, unknown>>({
-  requiredParams,
+  requiredParams = [],
   row = {} as T,
 }: UseRequiredParamsProps<T>) => {
   const [missingParams, setMissingParams] = useState<string[]>([]);
-  const searchParams = useSearchParams();
-  const searchParamsString = searchParams.toString();
+  const stableRequiredParams = useMemo(() => requiredParams, [requiredParams.join(',')]);
+  const stableRow = useMemo(() => row, [JSON.stringify(row)]);
 
   const requiredParamsMap: Record<string, string | null> = useMemo(
     () =>
-      requiredParams.reduce((acc, param) => {
-        const paramValue = Object.keys(row).length ? row[param] : searchParams.get(param);
+      stableRequiredParams.reduce((acc, param) => {
+        const paramValue = stableRow[param] ?? null;
         return { ...acc, [param]: paramValue };
       }, {}),
-    [searchParamsString, row, requiredParams]
+    [stableRow, stableRequiredParams]
   );
 
   useEffect(() => {
-    const missingParams = requiredParams.filter((param) => !requiredParamsMap[param]);
+    const missingParams = stableRequiredParams.filter((param) => !requiredParamsMap[param]);
     setMissingParams(missingParams);
-  }, [requiredParamsMap, requiredParams]);
+  }, [requiredParamsMap, stableRequiredParams]);
 
   const missingParamsAlert = missingParams.length && (
     <Alert severity="error">Missing required parameters: {missingParams.join(', ')}</Alert>

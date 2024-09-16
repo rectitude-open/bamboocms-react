@@ -34,7 +34,7 @@ export interface PageConfig<T> {
   title?: string;
   formType: 'page';
   url: string;
-  params: string[];
+  requiredParams: string[];
 }
 
 export type TableActionConfig<T> = { [key: string]: ActionConfig<T> | PageConfig<T> | DialogConfig<T> };
