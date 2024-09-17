@@ -54,7 +54,10 @@ const FormPage = <T,>({
   }, [data]);
 
   const mutation = useMutation({
-    mutationFn: submitService,
+    mutationFn: async (payload: any) => {
+      const response = await submitService!(payload.data, payload.params);
+      return response;
+    },
     onMutate: () => {
       setLoading(true);
       setDisableSubmit(true);
@@ -70,7 +73,11 @@ const FormPage = <T,>({
     },
   });
 
-  const onSubmit = ({ formData }: IChangeEvent<T>, e: any) => mutation.mutate({ ...formData, ...requiredParamsMap });
+  const onSubmit = ({ formData }: IChangeEvent<T>, e: any) =>
+    mutation.mutate({
+      data: formData,
+      params: requiredParamsMap,
+    });
 
   if (hasMissingParams) {
     return missingParamsAlert;
