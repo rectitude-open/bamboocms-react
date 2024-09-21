@@ -22,6 +22,7 @@ const FormPage = <T,>({
   uiSchema,
   services: { initService, submitService },
   requiredParams = [],
+  pageTitle,
 }: FormPageProps) => {
   const Form = useMemo(() => withTheme<T>(Theme), []);
   const validator = useMemo(() => customizeValidator<T>(), []);
@@ -86,12 +87,14 @@ const FormPage = <T,>({
   return (
     <Container maxWidth="xl">
       <Box>
-        <Button variant="text" startIcon={<KeyboardBackspace />} sx={{ p: 0 }} onClick={() => router.back()}>
+        <Button variant="text" startIcon={<KeyboardBackspace />} sx={{ mb: 1, p: 0.5 }} onClick={() => router.back()}>
           Roles
         </Button>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ py: 2 }}>
-          Edit Role
-        </Typography>
+        {pageTitle && (
+          <Typography variant="h4" component="h1" gutterBottom sx={{ pb: 2 }}>
+            {pageTitle}
+          </Typography>
+        )}
         <Paper variant="outlined" sx={{ p: 3, pt: 1 }}>
           {isLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>

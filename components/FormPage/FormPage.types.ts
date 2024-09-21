@@ -6,4 +6,5 @@ export interface FormPageProps {
     submitService?: (data: any, params?: any) => Promise<any>;
   };
   requiredParams?: string[];
+  pageTitle?: string;
 }

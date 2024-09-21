@@ -15,6 +15,7 @@ const Page = () => {
         services={{
           submitService: create,
         }}
+        pageTitle="Add Role"
       />
     </div>
   );
