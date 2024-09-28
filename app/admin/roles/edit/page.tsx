@@ -17,6 +17,7 @@ const Page = () => {
           submitService: update,
         }}
         requiredParams={['id']}
+        pageTitle="Edit Role"
       />
     </div>
   );
