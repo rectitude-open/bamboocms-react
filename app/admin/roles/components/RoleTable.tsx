@@ -42,6 +42,7 @@ const RoleTable = () => {
         accessorKey: 'description',
         header: 'Description',
         enableSorting: false,
+        enableColumnFilter: false,
       },
       {
         // accessorFn: (row) => new Date(row.created_at),
