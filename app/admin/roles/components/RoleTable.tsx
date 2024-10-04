@@ -3,14 +3,14 @@
 import React, { useMemo } from 'react';
 import { formatDate } from '@/utils/dateUtils';
 import { Box, Card } from '@mui/material';
-import { type MRT_ColumnDef } from 'material-react-table';
+import type { MRT_ColumnDef } from 'material-react-table';
 
 import TablePage from '@/components/TablePage';
-import { TableActionConfig } from '@/components/TablePage/TablePage.types';
+import type { TableActionConfig } from '@/components/TablePage/TablePage.types';
 
 import { schema, uiSchema } from '../schemas';
 import * as services from '../services';
-import { Role } from '../types';
+import type { Role } from '../types';
 
 const RoleTable = () => {
   const columns = useMemo<MRT_ColumnDef<Role>[]>(

@@ -4,7 +4,7 @@ import FormPage from '@/components/FormPage';
 
 import { schema, uiSchema } from '../schemas';
 import { update, view } from '../services';
-import { Role } from '../types';
+import type { Role } from '../types';
 
 const Page = () => {
   return (

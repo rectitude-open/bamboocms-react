@@ -1,7 +1,7 @@
-import { FetchService, UpdateService, ViewService } from '@/types/api';
+import type { FetchService, UpdateService, ViewService } from '@/types/api';
 import axiosInstance from '@/lib/axios';
 
-import { CreateRole, UpdateRole } from './types';
+import type { CreateRole, UpdateRole } from './types';
 
 export const fetch: FetchService = async (params, config = {}) => {
   const { data } = await axiosInstance.get(`/admin/administrator-roles`, {

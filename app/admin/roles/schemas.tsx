@@ -1,6 +1,6 @@
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 
-import { Role } from './types';
+import type { Role } from './types';
 
 export const schema: RJSFSchema = {
   type: 'object',
