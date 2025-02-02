@@ -8,5 +8,9 @@ export const paths = {
     integrations: '/dashboard/integrations',
     settings: '/dashboard/settings',
   },
+  admin: {
+    roles: '/admin/roles',
+    permissions: '/admin/permissions',
+  },
   errors: { notFound: '/errors/not-found' },
 } as const;
