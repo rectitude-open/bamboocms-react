@@ -6,7 +6,7 @@
   "homepage": "https://devias.io",
   "private": false,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3301 --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
