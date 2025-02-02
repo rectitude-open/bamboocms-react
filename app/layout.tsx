@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import type { Viewport } from 'next';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
@@ -26,8 +25,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-export const viewport = { width: 'device-width', initialScale: 1 } satisfies Viewport;
 
 interface LayoutProps {
   children: React.ReactNode;
