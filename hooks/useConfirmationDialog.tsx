@@ -63,9 +63,7 @@ const useConfirmationDialog = () => {
       aria-describedby="confirmation-dialog-description"
     >
       <DialogTitle id="confirmation-dialog-title">{title}</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="confirmation-dialog-description">{content}</DialogContentText>
-      </DialogContent>
+      <DialogContent>{content}</DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary" disabled={isLoading}>
           Cancel
