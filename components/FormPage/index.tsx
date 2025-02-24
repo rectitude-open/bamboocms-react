@@ -9,10 +9,8 @@ import { Theme } from '@rjsf/mui';
 import { customizeValidator } from '@rjsf/validator-ajv8';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
-
 import type { ApiResponse } from '@/types/api';
 import useRequiredParams from '@/hooks/useRequiredParams';
-
 import type { FormPageProps } from './FormPage.types';
 
 const onError = (errors: any) => console.log(errors);

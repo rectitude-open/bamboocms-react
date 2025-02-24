@@ -43,7 +43,10 @@ const FormDialog = <T extends Record<string, unknown>>({
     row,
   });
 
-  const queryKey = useMemo(() => ['view-form', requiredParamsMap], [requiredParamsMap]);
+  const queryKey = useMemo(
+    () => ['view-form', requiredParamsMap],
+    [requiredParamsMap]
+  );
 
   const { data, isError, isLoading, isRefetching } = useQuery<ApiResponse>({
     queryKey: queryKey,
@@ -63,7 +66,9 @@ const FormDialog = <T extends Record<string, unknown>>({
       setSubmitLoading(true);
     },
     onSuccess: (data) => {
-      enqueueSnackbar(data.message || 'Submitted successfully!', { variant: 'success' });
+      enqueueSnackbar(data.message || 'Submitted successfully!', {
+        variant: 'success',
+      });
       setSubmitLoading(false);
       handleClose();
       onSubmitSuccess();
