@@ -1,4 +1,3 @@
-import React, { createRef, useCallback, useEffect, useState } from 'react';
 import { Close as CloseIcon } from '@mui/icons-material';
 import {
   Box,
@@ -11,12 +10,14 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
-import type { DialogProps } from '@mui/material';
 import Form, { withTheme } from '@rjsf/core';
 import { Theme } from '@rjsf/mui';
-import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
 import { nanoid } from 'nanoid';
+import React, { createRef, useCallback, useEffect, useState } from 'react';
+
+import type { DialogProps } from '@mui/material';
+import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 
 const ThemeForm = withTheme(Theme);
 const formRef = createRef<Form>();
@@ -80,22 +81,21 @@ const BaseDialog = <T extends Record<string, unknown>>({
   };
 
   return (
-    <Dialog key={dialogKey} open={open} onClose={handleDialogClose} fullWidth maxWidth="sm" disableEscapeKeyDown>
+    <Dialog key={dialogKey} open={open} onClose={handleDialogClose} fullWidth maxWidth='sm' disableEscapeKeyDown>
       {isLoading && (
-        <Box height={400} width="100%" display="flex" alignItems="center" justifyContent="center">
+        <Box height={400} width='100%' display='flex' alignItems='center' justifyContent='center'>
           <CircularProgress />
         </Box>
       )}
       {!isLoading && (
         <>
           <DialogTitle>
-            <Typography fontSize="1.2rem">{title}</Typography>
+            <Typography fontSize='1.2rem'>{title}</Typography>
             <IconButton
-              aria-label="close"
+              aria-label='close'
               onClick={handleResetAndClose}
               sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
-              disabled={submitLoading}
-            >
+              disabled={submitLoading}>
               <CloseIcon />
             </IconButton>
           </DialogTitle>
@@ -115,16 +115,15 @@ const BaseDialog = <T extends Record<string, unknown>>({
           </DialogContent>
 
           <DialogActions>
-            <Button onClick={handleResetAndClose} color="secondary" disabled={submitLoading}>
+            <Button onClick={handleResetAndClose} color='secondary' disabled={submitLoading}>
               Cancel
             </Button>
             <Button
-              type="button"
-              color="primary"
+              type='button'
+              color='primary'
               onClick={() => formRef.current?.submit()}
               disabled={submitLoading}
-              startIcon={submitLoading ? <CircularProgress size={16} /> : null}
-            >
+              startIcon={submitLoading ? <CircularProgress size={16} /> : null}>
               Submit
             </Button>
           </DialogActions>

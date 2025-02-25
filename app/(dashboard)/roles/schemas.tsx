@@ -1,6 +1,5 @@
-import type { RJSFSchema, UiSchema } from '@rjsf/utils';
-
 import type { Role } from './types';
+import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 
 export const schema: RJSFSchema = {
   type: 'object',
@@ -18,10 +17,10 @@ export const schema: RJSFSchema = {
 };
 
 export const uiSchema: UiSchema<Role> = {
-  name: {
+  'name': {
     'ui:title': 'Name',
   },
-  description: {
+  'description': {
     'ui:title': 'Description',
     'ui:widget': 'textarea',
   },

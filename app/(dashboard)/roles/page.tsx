@@ -1,10 +1,11 @@
-import * as React from 'react';
-import type { Metadata } from 'next';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import * as React from 'react';
 
 import RoleTable from './components/RoleTable';
+
+import type { Metadata } from 'next';
 
 export const metadata = {
   title: `Customers | Dashboard | xxxxxxxx`,

@@ -1,11 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, Divider, IconButton, lighten, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
@@ -19,10 +16,12 @@ import {
   type MRT_SortingState,
   type MRT_TableInstance,
 } from 'material-react-table';
+import { useRouter } from 'next/navigation';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { ApiResponse } from '@/types/api';
-import useConfirmationDialog from '@/hooks/useConfirmationDialog';
 import FormDialog from '@/components/FormDialog/FormDialog';
+import useConfirmationDialog from '@/hooks/useConfirmationDialog';
+import type { ApiResponse } from '@/types/api';
 
 import AddAction from './actions/AddAction';
 import BulkDeleteAction from './actions/BulkDeleteAction';
@@ -31,6 +30,8 @@ import DuplicateAction from './actions/DuplicateAction';
 import EditAction from './actions/EditAction';
 import StyledMenu from './components/StyledMenu';
 import { TablePageProps } from './TablePage.types';
+
+import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 
 const theme = createTheme({
   palette: {
@@ -165,7 +166,7 @@ const TablePage = <T extends MRT_RowData>({
         <MRT_ToggleDensePaddingButton table={table} />
         <MRT_ShowHideColumnsButton table={table} />
         <MRT_ToggleFullScreenButton table={table} />
-        <Tooltip arrow title="Refresh Data">
+        <Tooltip arrow title='Refresh Data'>
           <IconButton onClick={() => refetch()}>
             <RefreshIcon />
           </IconButton>
@@ -211,34 +212,32 @@ const TablePage = <T extends MRT_RowData>({
           onGlobalFilterChange={setGlobalFilter}
           onPaginationChange={setPagination}
           onSortingChange={setSorting}
-          columnFilterDisplayMode="popover"
+          columnFilterDisplayMode='popover'
           renderToolbarInternalActions={renderToolbarInternalActions}
           enableRowActions
-          positionActionsColumn="last"
+          positionActionsColumn='last'
           renderRowActions={({ row }) => (
             <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
               {row && <EditAction row={row} actionConfig={actionConfig} handleAction={handleAction} />}
               <IconButton
-                aria-label="more"
-                id="more-button"
+                aria-label='more'
+                id='more-button'
                 aria-controls={moreMenuOpen ? 'action-menu' : undefined}
                 aria-expanded={moreMenuOpen ? 'true' : undefined}
-                aria-haspopup="true"
+                aria-haspopup='true'
                 onClick={(event) => {
                   handleMoreMenuClick(event, row);
-                }}
-              >
+                }}>
                 <MoreHoriz />
               </IconButton>
               <StyledMenu
-                id="action-menu"
+                id='action-menu'
                 MenuListProps={{
                   'aria-labelledby': 'more-button',
                 }}
                 anchorEl={anchorEl}
                 open={moreMenuOpen}
-                onClose={handleMoreMenuClose}
-              >
+                onClose={handleMoreMenuClose}>
                 {selectedRow && (
                   <DuplicateAction row={selectedRow} actionConfig={actionConfig} handleAction={handleAction} />
                 )}
@@ -260,7 +259,7 @@ const TablePage = <T extends MRT_RowData>({
             rowsPerPageOptions: [10, 20, 30],
             variant: 'outlined',
           }}
-          positionToolbarAlertBanner="top"
+          positionToolbarAlertBanner='top'
           renderBottomToolbarCustomActions={({ table }) => {
             return (
               <Box
@@ -270,8 +269,7 @@ const TablePage = <T extends MRT_RowData>({
                   gap: '0.5rem',
                   p: '8px',
                   justifyContent: 'space-between',
-                })}
-              >
+                })}>
                 <Box>
                   <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                     <BulkDeleteAction

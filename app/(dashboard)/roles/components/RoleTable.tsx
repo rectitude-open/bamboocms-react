@@ -1,16 +1,17 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import { formatDate } from '@/utils/dateUtils';
 import { Box, Card } from '@mui/material';
-import type { MRT_ColumnDef } from 'material-react-table';
+import React, { useMemo } from 'react';
 
 import TablePage from '@/components/TablePage';
 import type { TableActionConfig } from '@/components/TablePage/TablePage.types';
+import { formatDate } from '@/utils/dateUtils';
 
 import { schema, uiSchema } from '../schemas';
 import * as services from '../services';
+
 import type { Role } from '../types';
+import type { MRT_ColumnDef } from 'material-react-table';
 
 const RoleTable = () => {
   const columns = useMemo<MRT_ColumnDef<Role>[]>(
@@ -26,8 +27,7 @@ const RoleTable = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '1rem',
-            }}
-          >
+            }}>
             <span>ID: {renderedCellValue}--</span>
           </Box>
         ),
@@ -52,8 +52,7 @@ const RoleTable = () => {
         filterFn: 'between',
         filterVariant: 'date',
         sortingFn: 'datetime',
-        Cell: ({ cell }) =>
-          formatDate(cell.getValue() as string, 'YYYY-MM-DD HH:mm:ss'),
+        Cell: ({ cell }) => formatDate(cell.getValue() as string, 'YYYY-MM-DD HH:mm:ss'),
       },
     ],
     []

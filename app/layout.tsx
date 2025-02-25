@@ -1,19 +1,21 @@
 'use client';
 
-import * as React from 'react';
-import { NextAppProvider } from '@toolpad/core/nextjs';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import LinearProgress from '@mui/material/LinearProgress';
-import type { Navigation } from '@toolpad/core/AppProvider';
-import theme from '../theme';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { NextAppProvider } from '@toolpad/core/nextjs';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { SnackbarProvider } from 'notistack';
+import * as React from 'react';
+
+import theme from '../theme';
+
+import type { Navigation } from '@toolpad/core/AppProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -66,13 +68,8 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 anchorOrigin={{
                   vertical: 'top',
                   horizontal: 'center',
-                }}
-              >
-                <NextAppProvider
-                  navigation={NAVIGATION}
-                  branding={BRANDING}
-                  theme={theme}
-                >
+                }}>
+                <NextAppProvider navigation={NAVIGATION} branding={BRANDING} theme={theme}>
                   {props.children}
                 </NextAppProvider>
               </SnackbarProvider>

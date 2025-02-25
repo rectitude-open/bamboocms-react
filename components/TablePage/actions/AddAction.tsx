@@ -1,6 +1,6 @@
-import React from 'react';
 import { Add } from '@mui/icons-material';
 import { Button } from '@mui/material';
+import React from 'react';
 
 import { TableActionConfig } from '../TablePage.types';
 
@@ -16,14 +16,13 @@ const AddAction = <T,>({ actionConfig, handleAction }: AddActionProps<T>) => {
   return (
     <>
       <Button
-        color="primary"
-        variant="contained"
+        color='primary'
+        variant='contained'
         startIcon={<Add />}
         sx={{ ml: 2 }}
         onClick={() => {
           handleAction(addConfig);
-        }}
-      >
+        }}>
         Add
       </Button>
     </>

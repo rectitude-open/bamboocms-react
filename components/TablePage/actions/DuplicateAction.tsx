@@ -1,7 +1,7 @@
-import React from 'react';
 import { FileCopy } from '@mui/icons-material';
 import { MenuItem } from '@mui/material';
 import { type MRT_Row, type MRT_RowData } from 'material-react-table';
+import React from 'react';
 
 import { TableActionConfig } from '../TablePage.types';
 
@@ -20,8 +20,7 @@ const DuplicateAction = <T extends MRT_RowData>({ row, actionConfig, handleActio
       <MenuItem
         onClick={() => {
           handleAction(duplicateConfig, row.original);
-        }}
-      >
+        }}>
         <FileCopy />
         Duplicate
       </MenuItem>

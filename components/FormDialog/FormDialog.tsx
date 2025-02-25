@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ApiResponse } from '@/types/api';
 import useRequiredParams from '@/hooks/useRequiredParams';
+import { ApiResponse } from '@/types/api';
 
 import BaseDialog from './BaseDialog';
+
+import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 
 interface FormDialogProps<T> {
   title: string;
@@ -43,10 +44,7 @@ const FormDialog = <T extends Record<string, unknown>>({
     row,
   });
 
-  const queryKey = useMemo(
-    () => ['view-form', requiredParamsMap],
-    [requiredParamsMap]
-  );
+  const queryKey = useMemo(() => ['view-form', requiredParamsMap], [requiredParamsMap]);
 
   const { data, isError, isLoading, isRefetching } = useQuery<ApiResponse>({
     queryKey: queryKey,

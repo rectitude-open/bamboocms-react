@@ -1,5 +1,5 @@
-import type { FetchService, UpdateService, ViewService } from '@/types/api';
 import axiosInstance from '@/lib/axios';
+import type { FetchService, UpdateService, ViewService } from '@/types/api';
 
 import type { CreateRole, UpdateRole } from './types';
 

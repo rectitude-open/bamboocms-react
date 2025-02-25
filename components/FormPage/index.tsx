@@ -1,16 +1,18 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, KeyboardBackspace } from '@mui/icons-material';
 import { Alert, Box, Button, CircularProgress, Container, Paper, Typography } from '@mui/material';
 import { withTheme, type IChangeEvent } from '@rjsf/core';
 import { Theme } from '@rjsf/mui';
 import { customizeValidator } from '@rjsf/validator-ajv8';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSnackbar } from 'notistack';
-import type { ApiResponse } from '@/types/api';
+import React, { useEffect, useMemo, useState } from 'react';
+
 import useRequiredParams from '@/hooks/useRequiredParams';
+import type { ApiResponse } from '@/types/api';
+
 import type { FormPageProps } from './FormPage.types';
 
 const onError = (errors: any) => console.log(errors);
@@ -83,17 +85,17 @@ const FormPage = <T,>({
   }
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth='xl'>
       <Box>
-        <Button variant="text" startIcon={<KeyboardBackspace />} sx={{ mb: 1, p: 0.5 }} onClick={() => router.back()}>
+        <Button variant='text' startIcon={<KeyboardBackspace />} sx={{ mb: 1, p: 0.5 }} onClick={() => router.back()}>
           Roles
         </Button>
         {pageTitle && (
-          <Typography variant="h4" component="h1" gutterBottom sx={{ pb: 2 }}>
+          <Typography variant='h4' component='h1' gutterBottom sx={{ pb: 2 }}>
             {pageTitle}
           </Typography>
         )}
-        <Paper variant="outlined" sx={{ p: 3, pt: 1 }}>
+        <Paper variant='outlined' sx={{ p: 3, pt: 1 }}>
           {isLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
               <CircularProgress />
@@ -107,16 +109,14 @@ const FormPage = <T,>({
               onError={onError}
               disabled={loading}
               formData={formData}
-              onChange={(e) => e.formData && setFormData(e.formData)}
-            >
+              onChange={(e) => e.formData && setFormData(e.formData)}>
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
+                  type='submit'
+                  variant='contained'
+                  color='primary'
                   disabled={disableSubmit}
-                  startIcon={loading ? <CircularProgress size={20} /> : null}
-                >
+                  startIcon={loading ? <CircularProgress size={20} /> : null}>
                   {loading ? 'Loading...' : 'Submit'}
                 </Button>
               </Box>

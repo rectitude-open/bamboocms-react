@@ -4,6 +4,7 @@ import FormPage from '@/components/FormPage';
 
 import { schema, uiSchema } from '../schemas';
 import { update, view } from '../services';
+
 import type { Role } from '../types';
 
 const Page = () => {
@@ -17,7 +18,7 @@ const Page = () => {
           submitService: update,
         }}
         requiredParams={['id']}
-        pageTitle="Edit Role"
+        pageTitle='Edit Role'
       />
     </div>
   );

@@ -4,6 +4,7 @@ import FormPage from '@/components/FormPage';
 
 import { schema, uiSchema } from '../schemas';
 import { create, view } from '../services';
+
 import type { Role } from '../types';
 
 const Page = () => {
@@ -15,7 +16,7 @@ const Page = () => {
         services={{
           submitService: create,
         }}
-        pageTitle="Add Role"
+        pageTitle='Add Role'
       />
     </div>
   );

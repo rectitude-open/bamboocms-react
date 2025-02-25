@@ -1,7 +1,7 @@
-import React from 'react';
 import { Edit } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { type MRT_Row, type MRT_RowData } from 'material-react-table';
+import React from 'react';
 
 import { TableActionConfig } from '../TablePage.types';
 
@@ -19,11 +19,10 @@ const EditAction = <T extends MRT_RowData>({ row, actionConfig, handleAction }: 
   return (
     <>
       <IconButton
-        color="secondary"
+        color='secondary'
         onClick={() => {
           handleAction(editConfig, row.original);
-        }}
-      >
+        }}>
         <Edit />
       </IconButton>
     </>

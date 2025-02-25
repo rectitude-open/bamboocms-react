@@ -1,7 +1,7 @@
-import React, { Key } from 'react';
 import { Delete } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { type MRT_RowData, type MRT_TableInstance } from 'material-react-table';
+import React, { Key } from 'react';
 
 import { type OpenConfirmationDialog } from '@/hooks/useConfirmationDialog';
 
@@ -50,12 +50,11 @@ const BulkDeleteAction = <T extends MRT_RowData>({
 
   return (
     <Button
-      color="error"
+      color='error'
       onClick={() => handleBulkDelete(table)}
-      variant="contained"
+      variant='contained'
       startIcon={<Delete />}
-      disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-    >
+      disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}>
       Delete
     </Button>
   );

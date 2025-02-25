@@ -1,7 +1,7 @@
-import React from 'react';
 import { Delete } from '@mui/icons-material';
 import { MenuItem } from '@mui/material';
 import { type MRT_Row, type MRT_RowData } from 'material-react-table';
+import React from 'react';
 
 import { type OpenConfirmationDialog } from '@/hooks/useConfirmationDialog';
 
@@ -37,8 +37,7 @@ const DeleteAction = <T extends MRT_RowData>({
               await deleteMutation.mutateAsync(row.original.id);
             },
           });
-        }}
-      >
+        }}>
         <Delete />
         Delete
       </MenuItem>
