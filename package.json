@@ -36,15 +36,22 @@
     "react-dom": "^19"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.7",
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.21.0",
+    "@next/eslint-plugin-next": "^15.1.7",
     "@tanstack/eslint-plugin-query": "^5.66.0",
     "@tanstack/react-query-devtools": "^5.66.0",
     "@types/lodash": "^4.17.15",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript-eslint/parser": "^8.25.0",
     "eslint": "^9",
     "eslint-config-next": "^15",
     "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
     "prettier": "^3.5.2",
     "typescript": "^5"
   }
