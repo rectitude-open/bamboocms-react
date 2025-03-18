@@ -1,8 +1,9 @@
 import { BaseEntity, CreateEntity, UpdateEntity } from '@/types/BaseEntity';
 
 export interface Role extends BaseEntity {
-  name: string;
-  description: string;
+  label: string;
+  created_at: string;
+  status: string;
 }
 
 export type CreateRole = CreateEntity<Role>;

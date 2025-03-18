@@ -1,28 +1,48 @@
+import dayjs from 'dayjs';
+
+import { formatDate } from '@/utils/dateUtils';
+
 import type { Role } from './types';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 
 export const schema: RJSFSchema = {
   type: 'object',
-  required: ['name'],
+  required: ['label'],
   properties: {
-    name: {
+    label: {
       type: 'string',
       maxLength: 255,
     },
-    description: {
+    created_at: {
       type: 'string',
-      maxLength: 255,
+      format: 'date-time',
+      default: dayjs().toISOString(),
+    },
+    status: {
+      type: 'string',
+      oneOf: [
+        {
+          const: 'active',
+          title: 'Active',
+        },
+        {
+          const: 'subspended',
+          title: 'Subspended',
+        },
+      ],
     },
   },
 };
 
 export const uiSchema: UiSchema<Role> = {
-  'name': {
-    'ui:title': 'Name',
+  'label': {
+    'ui:title': 'Label',
   },
-  'description': {
-    'ui:title': 'Description',
-    'ui:widget': 'textarea',
+  'created_at': {
+    'ui:title': 'Created At',
+  },
+  'status': {
+    'ui:title': 'Status',
   },
   'ui:submitButtonOptions': {
     norender: true,

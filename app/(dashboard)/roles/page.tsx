@@ -8,7 +8,7 @@ import RoleTable from './components/RoleTable';
 import type { Metadata } from 'next';
 
 export const metadata = {
-  title: `Customers | Dashboard | xxxxxxxx`,
+  title: `Roles`,
 } satisfies Metadata;
 
 export default function Page() {

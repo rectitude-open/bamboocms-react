@@ -33,14 +33,14 @@ const RoleTable = () => {
         ),
       },
       {
-        accessorKey: 'name',
-        header: 'Role Name',
+        accessorKey: 'label',
+        header: 'Label',
         enableClickToCopy: true,
         enableSorting: false,
       },
       {
-        accessorKey: 'description',
-        header: 'Description',
+        accessorKey: 'status',
+        header: 'Status',
         enableSorting: false,
         enableColumnFilter: false,
       },
