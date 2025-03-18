@@ -4,18 +4,24 @@ import { ArrowLeft, KeyboardBackspace } from '@mui/icons-material';
 import { Alert, Box, Button, CircularProgress, Container, Paper, Typography } from '@mui/material';
 import { withTheme, type IChangeEvent } from '@rjsf/core';
 import { Theme } from '@rjsf/mui';
+import { RegistryWidgetsType } from '@rjsf/utils';
 import { customizeValidator } from '@rjsf/validator-ajv8';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useMemo, useState } from 'react';
 
+import SwitchWidget from '@/components/SwitchWidget';
 import useRequiredParams from '@/hooks/useRequiredParams';
 import type { ApiResponse } from '@/types/api';
 
 import type { FormPageProps } from './FormPage.types';
 
 const onError = (errors: any) => console.log(errors);
+
+const widgets: RegistryWidgetsType = {
+  SwitchWidget,
+};
 
 const FormPage = <T,>({
   schema,
@@ -109,6 +115,7 @@ const FormPage = <T,>({
               onError={onError}
               disabled={loading}
               formData={formData}
+              widgets={widgets}
               onChange={(e) => e.formData && setFormData(e.formData)}>
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button

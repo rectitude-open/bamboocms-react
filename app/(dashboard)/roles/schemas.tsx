@@ -1,7 +1,5 @@
 import dayjs from 'dayjs';
 
-import { formatDate } from '@/utils/dateUtils';
-
 import type { Role } from './types';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 
@@ -20,16 +18,8 @@ export const schema: RJSFSchema = {
     },
     status: {
       type: 'string',
-      oneOf: [
-        {
-          const: 'active',
-          title: 'Active',
-        },
-        {
-          const: 'subspended',
-          title: 'Subspended',
-        },
-      ],
+      enum: ['active', 'subspended'],
+      default: 'active',
     },
   },
 };
@@ -43,6 +33,11 @@ export const uiSchema: UiSchema<Role> = {
   },
   'status': {
     'ui:title': 'Status',
+    'ui:widget': 'SwitchWidget',
+    'ui:options': {
+      onValue: 'active',
+      offValue: 'subspended',
+    },
   },
   'ui:submitButtonOptions': {
     norender: true,
