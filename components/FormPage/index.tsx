@@ -11,6 +11,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useMemo, useState } from 'react';
 
+import DateTimeWidget from '@/components/DateTimeWidget';
 import SwitchWidget from '@/components/SwitchWidget';
 import useRequiredParams from '@/hooks/useRequiredParams';
 import type { ApiResponse } from '@/types/api';
@@ -21,6 +22,7 @@ const onError = (errors: any) => console.log(errors);
 
 const widgets: RegistryWidgetsType = {
   SwitchWidget,
+  DateTimeWidget,
 };
 
 const FormPage = <T,>({

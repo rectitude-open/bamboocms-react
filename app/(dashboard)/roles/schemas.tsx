@@ -14,7 +14,6 @@ export const schema: RJSFSchema = {
     created_at: {
       type: 'string',
       format: 'date-time',
-      default: dayjs().toISOString(),
     },
     status: {
       type: 'string',
@@ -30,6 +29,7 @@ export const uiSchema: UiSchema<Role> = {
   },
   'created_at': {
     'ui:title': 'Created At',
+    'ui:widget': 'DateTimeWidget',
   },
   'status': {
     'ui:title': 'Status',
