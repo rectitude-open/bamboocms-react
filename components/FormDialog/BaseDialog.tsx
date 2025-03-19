@@ -12,9 +12,13 @@ import {
 } from '@mui/material';
 import Form, { withTheme } from '@rjsf/core';
 import { Theme } from '@rjsf/mui';
+import { RegistryWidgetsType } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
 import { nanoid } from 'nanoid';
 import React, { createRef, useCallback, useEffect, useState } from 'react';
+
+import DateTimeWidget from '@/components/DateTimeWidget';
+import SwitchWidget from '@/components/SwitchWidget';
 
 import type { DialogProps } from '@mui/material';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
@@ -33,6 +37,11 @@ interface BaseDialogProps<T> {
   onSubmit: (formData: T) => void;
   submitLoading?: boolean;
 }
+
+const widgets: RegistryWidgetsType = {
+  SwitchWidget,
+  DateTimeWidget,
+};
 
 const BaseDialog = <T extends Record<string, unknown>>({
   open,
@@ -105,6 +114,7 @@ const BaseDialog = <T extends Record<string, unknown>>({
               ref={formRef}
               schema={schema}
               uiSchema={uiSchema}
+              widgets={widgets}
               validator={validator}
               formData={internalFormData}
               onChange={({ formData }) => setInternalFormData(formData)}
