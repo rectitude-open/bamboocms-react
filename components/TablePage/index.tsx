@@ -6,6 +6,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
+  useMaterialReactTable,
   MRT_ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton,
   MRT_ToggleFullScreenButton,
@@ -17,7 +18,7 @@ import {
   type MRT_TableInstance,
 } from 'material-react-table';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import FormDialog from '@/components/FormDialog/FormDialog';
 import useConfirmationDialog from '@/hooks/useConfirmationDialog';
@@ -29,6 +30,7 @@ import DeleteAction from './actions/DeleteAction';
 import DuplicateAction from './actions/DuplicateAction';
 import EditAction from './actions/EditAction';
 import StyledMenu from './components/StyledMenu';
+import { TablePageContext } from './contexts/TablePageContext';
 import { TablePageProps } from './TablePage.types';
 
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
@@ -177,118 +179,128 @@ const TablePage = <T extends MRT_RowData>({
     [actionConfig, handleAction, refetch]
   );
 
-  return (
-    <Card>
-      <ThemeProvider theme={theme}>
-        <MaterialReactTable<T>
-          columns={columns}
-          data={tableData}
-          initialState={{
-            columnPinning: { right: ['mrt-row-actions'] },
+  const table = useMaterialReactTable({
+    columns,
+    data: tableData,
+    initialState: {
+      columnPinning: { right: ['mrt-row-actions'] },
+    },
+    manualFiltering: true,
+    manualPagination: true,
+    manualSorting: true,
+    muiToolbarAlertBannerProps: isError
+      ? {
+          color: 'error',
+          children: 'Error loading data',
+        }
+      : undefined,
+    enableRowSelection: true,
+    enableColumnPinning: true,
+    state: {
+      isLoading: isLoading || isRefetching,
+      showProgressBars: isLoading || isRefetching,
+      columnFilters,
+      globalFilter,
+      pagination,
+      showAlertBanner: isError,
+      sorting,
+    },
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    columnFilterDisplayMode: 'popover',
+    renderToolbarInternalActions,
+    enableRowActions: true,
+    positionActionsColumn: 'last',
+    renderRowActions: ({ row }) => (
+      <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
+        {row && <EditAction row={row} actionConfig={actionConfig} handleAction={handleAction} />}
+        <IconButton
+          aria-label='more'
+          id='more-button'
+          aria-controls={moreMenuOpen ? 'action-menu' : undefined}
+          aria-expanded={moreMenuOpen ? 'true' : undefined}
+          aria-haspopup='true'
+          onClick={(event) => {
+            handleMoreMenuClick(event, row);
+          }}>
+          <MoreHoriz />
+        </IconButton>
+        <StyledMenu
+          id='action-menu'
+          MenuListProps={{
+            'aria-labelledby': 'more-button',
           }}
-          manualFiltering
-          manualPagination
-          manualSorting
-          muiToolbarAlertBannerProps={
-            isError
-              ? {
-                  color: 'error',
-                  children: 'Error loading data',
-                }
-              : undefined
-          }
-          enableRowSelection
-          enableColumnPinning
-          state={{
-            isLoading: isLoading || isRefetching,
-            showProgressBars: isLoading || isRefetching,
-            columnFilters,
-            globalFilter,
-            pagination,
-            showAlertBanner: isError,
-            sorting,
-          }}
-          onColumnFiltersChange={setColumnFilters}
-          onGlobalFilterChange={setGlobalFilter}
-          onPaginationChange={setPagination}
-          onSortingChange={setSorting}
-          columnFilterDisplayMode='popover'
-          renderToolbarInternalActions={renderToolbarInternalActions}
-          enableRowActions
-          positionActionsColumn='last'
-          renderRowActions={({ row }) => (
-            <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-              {row && <EditAction row={row} actionConfig={actionConfig} handleAction={handleAction} />}
-              <IconButton
-                aria-label='more'
-                id='more-button'
-                aria-controls={moreMenuOpen ? 'action-menu' : undefined}
-                aria-expanded={moreMenuOpen ? 'true' : undefined}
-                aria-haspopup='true'
-                onClick={(event) => {
-                  handleMoreMenuClick(event, row);
-                }}>
-                <MoreHoriz />
-              </IconButton>
-              <StyledMenu
-                id='action-menu'
-                MenuListProps={{
-                  'aria-labelledby': 'more-button',
-                }}
-                anchorEl={anchorEl}
-                open={moreMenuOpen}
-                onClose={handleMoreMenuClose}>
-                {selectedRow && (
-                  <DuplicateAction row={selectedRow} actionConfig={actionConfig} handleAction={handleAction} />
-                )}
-                <Divider sx={{ my: 0.5 }} />
-                {selectedRow && (
-                  <DeleteAction
-                    row={selectedRow}
-                    handleMoreMenuClose={handleMoreMenuClose}
-                    actionConfig={actionConfig}
-                    refetch={refetch}
-                    openConfirmationDialog={openConfirmationDialog}
-                  />
-                )}
-              </StyledMenu>
-            </Box>
+          anchorEl={anchorEl}
+          open={moreMenuOpen}
+          onClose={handleMoreMenuClose}>
+          {selectedRow && <DuplicateAction row={selectedRow} actionConfig={actionConfig} handleAction={handleAction} />}
+          <Divider sx={{ my: 0.5 }} />
+          {selectedRow && (
+            <DeleteAction
+              row={selectedRow}
+              handleMoreMenuClose={handleMoreMenuClose}
+              actionConfig={actionConfig}
+              refetch={refetch}
+              openConfirmationDialog={openConfirmationDialog}
+            />
           )}
-          muiPaginationProps={{
-            color: 'secondary',
-            rowsPerPageOptions: [10, 20, 30],
-            variant: 'outlined',
-          }}
-          positionToolbarAlertBanner='top'
-          renderBottomToolbarCustomActions={({ table }) => {
-            return (
-              <Box
-                sx={(theme) => ({
-                  backgroundColor: lighten(theme.palette.background.default, 0.05),
-                  display: 'flex',
-                  gap: '0.5rem',
-                  p: '8px',
-                  justifyContent: 'space-between',
-                })}>
-                <Box>
-                  <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-                    <BulkDeleteAction
-                      table={table}
-                      actionConfig={actionConfig}
-                      refetch={refetch}
-                      openConfirmationDialog={openConfirmationDialog}
-                    />
-                  </Box>
-                </Box>
-              </Box>
-            );
-          }}
-          rowCount={totalRowCount}
-        />
-        {formDialog}
-        {ConfirmationDialog}
-      </ThemeProvider>
-    </Card>
+        </StyledMenu>
+      </Box>
+    ),
+    muiPaginationProps: {
+      color: 'secondary',
+      rowsPerPageOptions: [10, 20, 30],
+      variant: 'outlined',
+    },
+    positionToolbarAlertBanner: 'top',
+    renderBottomToolbarCustomActions: ({ table }) => (
+      <Box
+        sx={(theme) => ({
+          backgroundColor: lighten(theme.palette.background.default, 0.05),
+          display: 'flex',
+          gap: '0.5rem',
+          p: '8px',
+          justifyContent: 'space-between',
+        })}>
+        <Box>
+          <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+            <BulkDeleteAction
+              table={table}
+              actionConfig={actionConfig}
+              refetch={refetch}
+              openConfirmationDialog={openConfirmationDialog}
+            />
+          </Box>
+        </Box>
+      </Box>
+    ),
+    rowCount: totalRowCount,
+  });
+
+  const contextValue = useMemo(
+    () => ({
+      table,
+      refetch,
+      isLoading,
+      isRefetching,
+      pagination,
+      data: tableData,
+    }),
+    [table, refetch, isLoading, isRefetching, pagination, tableData]
+  );
+
+  return (
+    <TablePageContext.Provider value={contextValue}>
+      <Card>
+        <ThemeProvider theme={theme}>
+          <MaterialReactTable<T> table={table} />
+          {formDialog}
+          {ConfirmationDialog}
+        </ThemeProvider>
+      </Card>
+    </TablePageContext.Provider>
   );
 };
 export default TablePage;
