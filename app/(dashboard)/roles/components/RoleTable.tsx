@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Card } from '@mui/material';
+import { CheckCircle, Cancel } from '@mui/icons-material';
+import { Box, Card, Chip } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import TablePage from '@/components/TablePage';
@@ -39,12 +40,6 @@ const RoleTable = () => {
         enableSorting: false,
       },
       {
-        accessorKey: 'status',
-        header: 'Status',
-        enableSorting: false,
-        enableColumnFilter: false,
-      },
-      {
         // accessorFn: (row) => new Date(row.created_at),
         // id: 'created_at',
         accessorKey: 'created_at',
@@ -53,6 +48,30 @@ const RoleTable = () => {
         filterVariant: 'date',
         sortingFn: 'datetime',
         Cell: ({ cell }) => formatDate(cell.getValue() as string, 'YYYY-MM-DD HH:mm:ss'),
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        enableSorting: false,
+        enableColumnFilter: false,
+        Cell: function ({ cell }) {
+          const status = cell.getValue() as string;
+          return status === 'active' ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Chip
+                label='Active'
+                size='small'
+                color='success'
+                variant='outlined'
+                icon={<CheckCircle fontSize='small' />}
+              />
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Chip label='Inactive' size='small' color='error' variant='outlined' icon={<Cancel fontSize='small' />} />
+            </Box>
+          );
+        },
       },
     ],
     []
