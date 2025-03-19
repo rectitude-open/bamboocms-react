@@ -4,6 +4,8 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import LinearProgress from '@mui/material/LinearProgress';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NextAppProvider } from '@toolpad/core/nextjs';
@@ -69,9 +71,11 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                   vertical: 'top',
                   horizontal: 'center',
                 }}>
-                <NextAppProvider navigation={NAVIGATION} branding={BRANDING} theme={theme}>
-                  {props.children}
-                </NextAppProvider>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <NextAppProvider navigation={NAVIGATION} branding={BRANDING} theme={theme}>
+                    {props.children}
+                  </NextAppProvider>
+                </LocalizationProvider>
               </SnackbarProvider>
             </QueryClientProvider>
           </React.Suspense>
