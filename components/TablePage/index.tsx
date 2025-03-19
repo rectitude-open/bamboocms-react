@@ -1,6 +1,5 @@
-import { MoreHoriz } from '@mui/icons-material';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Box, Divider, IconButton, lighten, Tooltip } from '@mui/material';
+import { Box, IconButton, lighten, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useQuery } from '@tanstack/react-query';
@@ -12,13 +11,12 @@ import {
   MRT_ToggleFullScreenButton,
   type MRT_ColumnFiltersState,
   type MRT_PaginationState,
-  type MRT_Row,
   type MRT_RowData,
   type MRT_SortingState,
   type MRT_TableInstance,
 } from 'material-react-table';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import FormDialog from '@/components/FormDialog/FormDialog';
 import useConfirmationDialog from '@/hooks/useConfirmationDialog';
@@ -26,13 +24,10 @@ import type { ApiResponse } from '@/types/api';
 
 import AddAction from './actions/AddAction';
 import BulkDeleteAction from './actions/BulkDeleteAction';
-import DeleteAction from './actions/DeleteAction';
-import DuplicateAction from './actions/DuplicateAction';
-import EditAction from './actions/EditAction';
-import StyledMenu from './components/StyledMenu';
+import RowActions from './components/RowActions';
 import { TablePageContext } from './contexts/TablePageContext';
-import { TablePageProps } from './TablePage.types';
 
+import type { TablePageProps } from './TablePage.types';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 
 const theme = createTheme({
@@ -62,7 +57,6 @@ const TablePage = <T extends MRT_RowData>({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogState, setDialogState] = useState({
     open: false,
@@ -76,21 +70,9 @@ const TablePage = <T extends MRT_RowData>({
 
   const router = useRouter();
   const [tableData, setTableData] = useState<T[]>([]);
-  const [selectedRow, setSelectedRow] = useState<MRT_Row<T> | undefined>();
-  const moreMenuOpen = Boolean(anchorEl);
   const [totalRowCount, setTotalRowCount] = useState(0);
 
   const { ConfirmationDialog, openConfirmationDialog } = useConfirmationDialog();
-
-  const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>, row: MRT_Row<T>) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedRow(row);
-  };
-
-  const handleMoreMenuClose = useCallback(() => {
-    setAnchorEl(null);
-    setSelectedRow(undefined);
-  }, []);
 
   const { data, isError, isLoading, isRefetching, refetch } = useQuery<ApiResponse<T>>({
     queryKey: ['table-data', columnFilters, globalFilter, pagination.pageIndex, pagination.pageSize, sorting],
@@ -136,7 +118,7 @@ const TablePage = <T extends MRT_RowData>({
               row: record,
             });
             setOpenDialog(true);
-            handleMoreMenuClose();
+            // handleMoreMenuClose();
           }
           break;
         case 'page':
@@ -149,7 +131,8 @@ const TablePage = <T extends MRT_RowData>({
           break;
       }
     },
-    [router, handleMoreMenuClose]
+    // handleMoreMenuClose
+    [router]
   );
 
   useEffect(() => {
@@ -214,40 +197,13 @@ const TablePage = <T extends MRT_RowData>({
     enableRowActions: true,
     positionActionsColumn: 'last',
     renderRowActions: ({ row }) => (
-      <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
-        {row && <EditAction row={row} actionConfig={actionConfig} handleAction={handleAction} />}
-        <IconButton
-          aria-label='more'
-          id='more-button'
-          aria-controls={moreMenuOpen ? 'action-menu' : undefined}
-          aria-expanded={moreMenuOpen ? 'true' : undefined}
-          aria-haspopup='true'
-          onClick={(event) => {
-            handleMoreMenuClick(event, row);
-          }}>
-          <MoreHoriz />
-        </IconButton>
-        <StyledMenu
-          id='action-menu'
-          MenuListProps={{
-            'aria-labelledby': 'more-button',
-          }}
-          anchorEl={anchorEl}
-          open={moreMenuOpen}
-          onClose={handleMoreMenuClose}>
-          {selectedRow && <DuplicateAction row={selectedRow} actionConfig={actionConfig} handleAction={handleAction} />}
-          <Divider sx={{ my: 0.5 }} />
-          {selectedRow && (
-            <DeleteAction
-              row={selectedRow}
-              handleMoreMenuClose={handleMoreMenuClose}
-              actionConfig={actionConfig}
-              refetch={refetch}
-              openConfirmationDialog={openConfirmationDialog}
-            />
-          )}
-        </StyledMenu>
-      </Box>
+      <RowActions<T>
+        row={row}
+        actionConfig={actionConfig}
+        handleAction={handleAction}
+        refetch={refetch}
+        openConfirmationDialog={openConfirmationDialog}
+      />
     ),
     muiPaginationProps: {
       color: 'secondary',
