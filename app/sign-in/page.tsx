@@ -9,11 +9,14 @@ import { useRouter } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 
+import { useAuthStore } from '@/stores/auth';
+
 const providers = [{ id: 'credentials', name: 'Credentials' }];
 
 export default function BrandingSignInPage() {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
+  const login = useAuthStore((state) => state.login);
 
   const loginMutation = useMutation({
     mutationFn: (credentials: { email: string; password: string }) =>
@@ -33,7 +36,7 @@ export default function BrandingSignInPage() {
         const { data } = response;
 
         if (data?.data?.token) {
-          localStorage.setItem('access_token', data?.data?.token);
+          login(data?.data?.token);
           enqueueSnackbar('Sign-in successful. Redirecting...', { variant: 'success' });
           router.push(callbackUrl || '/');
           return { success: 'Sign-in successful. Redirecting...' } as AuthResponse;

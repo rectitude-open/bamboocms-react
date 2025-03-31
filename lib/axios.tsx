@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
 
+import { useAuthStore } from '@/stores/auth';
+
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   timeout: 30000,
@@ -11,7 +13,10 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    // config.headers.Authorization = `Bearer ${token}`;
+    const token = useAuthStore.getState().token;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
@@ -26,9 +31,6 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response) {
       switch (error.response.status) {
-        case 403:
-          enqueueSnackbar('Access denied', { variant: 'error', autoHideDuration: 6000 });
-          break;
         case 404:
           enqueueSnackbar('Page not found', { variant: 'error', autoHideDuration: 6000 });
           break;
