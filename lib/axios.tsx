@@ -26,14 +26,11 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response) {
       switch (error.response.status) {
-        case 401:
-          enqueueSnackbar('Unauthorized, please log in again', { variant: 'error', autoHideDuration: 6000 });
-          break;
         case 403:
           enqueueSnackbar('Access denied', { variant: 'error', autoHideDuration: 6000 });
           break;
         case 404:
-          enqueueSnackbar('Resource not found', { variant: 'error', autoHideDuration: 6000 });
+          enqueueSnackbar('Page not found', { variant: 'error', autoHideDuration: 6000 });
           break;
         case 422: {
           const errorMessages = (error.response.data?.error?.messages as string[]) || ['Validation Error'];
