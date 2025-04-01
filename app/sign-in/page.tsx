@@ -2,7 +2,7 @@
 
 import { useTheme } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
-import { AppProvider } from '@toolpad/core/AppProvider';
+import { AppProvider as ToolPadAppProvider } from '@toolpad/core/AppProvider';
 import { AuthResponse, SignInPage, type AuthProvider } from '@toolpad/core/SignInPage';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -62,7 +62,7 @@ export default function BrandingSignInPage() {
 
   const theme = useTheme();
   return (
-    <AppProvider theme={theme}>
+    <ToolPadAppProvider theme={theme}>
       <SignInPage
         signIn={signIn}
         providers={providers}
@@ -71,6 +71,6 @@ export default function BrandingSignInPage() {
         }}
         slotProps={{ emailField: { autoFocus: true } }}
       />
-    </AppProvider>
+    </ToolPadAppProvider>
   );
 }
