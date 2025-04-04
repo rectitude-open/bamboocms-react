@@ -34,21 +34,21 @@ export default function BrandingSignInPage() {
       const password = formData.get('password') || '';
       try {
         const response = await loginMutation.mutateAsync({ email, password });
-        const { data } = response;
+        const { token, user, message } = response?.data?.data ?? {};
 
-        if (data?.data?.token) {
+        if (token && user) {
           setProfile({
-            id: data?.data?.user?.id,
-            display_name: data?.data?.user?.display_name,
-            email: data?.data?.user?.email,
+            id: user.id,
+            display_name: user.display_name,
+            email: user.email,
           });
-          login(data?.data?.token);
+          login(token);
           enqueueSnackbar('Sign-in successful. Redirecting...', { variant: 'success' });
           router.push(callbackUrl || '/');
           return { success: 'Sign-in successful. Redirecting...' } as AuthResponse;
         } else {
           return {
-            error: data?.data?.message || 'Sign-in failed',
+            error: message || 'Sign-in failed',
             type: 'error',
           } as AuthResponse;
         }
