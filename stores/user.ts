@@ -10,7 +10,7 @@ type UserProfile = {
 type UserStore = {
   profile: UserProfile | null;
   token: string | null;
-  setProfile: (profile: UserProfile) => void;
+  setProfile: (profile: UserProfile | null) => void;
   login: (token: string) => void;
   logout: () => void;
   _hasHydrated?: boolean;

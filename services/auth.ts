@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import axiosInstance from '@/lib/axios';
 import type { LoginResponse } from '@/types/auth';
 
 export const authService = {
@@ -9,4 +10,5 @@ export const authService = {
         'Content-Type': 'application/json',
       },
     }),
+  getProfile: async () => axiosInstance.get(`/auth/me`),
 };
