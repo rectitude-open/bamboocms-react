@@ -67,6 +67,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             <QueryClientProvider client={queryClient}>
               <ReactQueryDevtools initialIsOpen={false} />
               <SnackbarProvider
+                autoHideDuration={3000}
                 anchorOrigin={{
                   vertical: 'top',
                   horizontal: 'center',
