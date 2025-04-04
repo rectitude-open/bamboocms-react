@@ -17,9 +17,10 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [isErrorHandled, setIsErrorHandled] = useState(false);
 
   const handleLogout = () => {
+    const redirect = encodeURIComponent(window.location.pathname + window.location.search);
     logout();
     setProfile(null);
-    router.replace('/sign-in');
+    router.replace(`/sign-in?redirect=${redirect}`);
   };
 
   const { mutate } = useMutation({
@@ -46,8 +47,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isHydrated || isErrorHandled) return;
 
-    if (!token) {
+    if (!token && !window.location.pathname.startsWith('/sign-in')) {
       router.replace('/sign-in');
+      return;
     }
 
     if (!profile) {

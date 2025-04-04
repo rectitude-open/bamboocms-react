@@ -27,10 +27,11 @@ const Account = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSignOut = () => {
+    const redirect = encodeURIComponent(window.location.pathname + window.location.search);
     enqueueSnackbar('Sign-out successful.', { variant: 'info' });
-    logout();
     setAnchorEl(null);
-    router.push('/sign-in');
+    logout();
+    router.replace(`/sign-in?redirect=${redirect}`);
   };
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {

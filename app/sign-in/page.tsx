@@ -4,7 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
 import { AppProvider as ToolPadAppProvider } from '@toolpad/core/AppProvider';
 import { AuthResponse, SignInPage, type AuthProvider } from '@toolpad/core/SignInPage';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -15,6 +15,9 @@ import { useUserStore } from '@/stores/user';
 const providers = [{ id: 'credentials', name: 'Credentials' }];
 
 export default function BrandingSignInPage() {
+  const searchParams = useSearchParams();
+  const redirect = decodeURIComponent(searchParams.get('redirect') || '/');
+
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const { login, setProfile } = useUserStore(
@@ -27,7 +30,7 @@ export default function BrandingSignInPage() {
   const loginMutation = useMutation({ mutationFn: authService.login });
 
   const signIn = React.useCallback(
-    async (provider: AuthProvider, formData?: any, callbackUrl?: string) => {
+    async (provider: AuthProvider, formData?: any) => {
       if (provider.id === 'credentials' && formData) {
         const email = formData.get('email') || '';
         const password = formData.get('password') || '';
@@ -43,7 +46,7 @@ export default function BrandingSignInPage() {
             });
             login(token);
             enqueueSnackbar('Sign-in successful. Redirecting...', { variant: 'success' });
-            router.push(callbackUrl || '/');
+            router.replace(redirect);
             return { success: 'Sign-in successful. Redirecting...' } as AuthResponse;
           } else {
             return {
