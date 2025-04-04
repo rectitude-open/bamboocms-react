@@ -1,8 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+type UserProfile = {
+  id: string;
+  display_name: string;
+  email: string;
+};
+
 type UserStore = {
+  profile: UserProfile | null;
   token: string | null;
+  setProfile: (profile: UserProfile) => void;
   login: (token: string) => void;
   logout: () => void;
   _hasHydrated?: boolean;
@@ -11,9 +19,11 @@ type UserStore = {
 export const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
+      profile: null,
       token: null,
+      setProfile: (profile) => set({ profile }),
       login: (token) => set({ token }),
-      logout: () => set({ token: null }),
+      logout: () => set({ profile: null, token: null }),
     }),
     {
       name: 'user-storage',

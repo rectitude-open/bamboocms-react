@@ -17,6 +17,7 @@ const Account = () => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
   const logout = useUserStore((state) => state.logout);
+  const profile = useUserStore((state) => state.profile);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -85,10 +86,10 @@ const Account = () => {
           <Stack direction='row' justifyContent='flex-start' spacing={2} overflow='hidden'>
             <Stack direction='column' justifyContent='space-evenly' overflow='hidden'>
               <Typography variant='body2' fontWeight='bolder' noWrap>
-                Display Name
+                {profile?.display_name}
               </Typography>
               <Typography variant='caption' noWrap>
-                Email
+                {profile?.email}
               </Typography>
               <Divider />
               <Button

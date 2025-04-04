@@ -17,6 +17,7 @@ export default function BrandingSignInPage() {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const login = useUserStore((state) => state.login);
+  const setProfile = useUserStore((state) => state.setProfile);
 
   const loginMutation = useMutation({
     mutationFn: (credentials: { email: string; password: string }) =>
@@ -36,6 +37,11 @@ export default function BrandingSignInPage() {
         const { data } = response;
 
         if (data?.data?.token) {
+          setProfile({
+            id: data?.data?.user?.id,
+            display_name: data?.data?.user?.display_name,
+            email: data?.data?.user?.email,
+          });
           login(data?.data?.token);
           enqueueSnackbar('Sign-in successful. Redirecting...', { variant: 'success' });
           router.push(callbackUrl || '/');
