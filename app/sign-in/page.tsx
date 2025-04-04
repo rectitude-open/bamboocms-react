@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 
+import { authService } from '@/services/auth';
 import { useUserStore } from '@/stores/user';
 
 const providers = [{ id: 'credentials', name: 'Credentials' }];
@@ -18,15 +19,7 @@ export default function BrandingSignInPage() {
   const router = useRouter();
   const login = useUserStore((state) => state.login);
   const setProfile = useUserStore((state) => state.setProfile);
-
-  const loginMutation = useMutation({
-    mutationFn: (credentials: { email: string; password: string }) =>
-      axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, credentials, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }),
-  });
+  const loginMutation = useMutation({ mutationFn: authService.login });
 
   const signIn = async (provider: AuthProvider, formData?: any, callbackUrl?: string) => {
     if (provider.id === 'credentials' && formData) {
@@ -48,13 +41,13 @@ export default function BrandingSignInPage() {
           return { success: 'Sign-in successful. Redirecting...' } as AuthResponse;
         } else {
           return {
-            error: message || 'Sign-in failed',
+            error: message ?? 'Sign-in failed',
             type: 'error',
           } as AuthResponse;
         }
       } catch (error: any) {
         return {
-          error: error.response?.data?.message || 'Sign-in failed',
+          error: error.response?.data?.message ?? 'Sign-in failed',
           type: 'error',
         } as AuthResponse;
       }
