@@ -4,6 +4,7 @@ import Avatar from '@mui/material/Avatar';
 import { useRouter } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import React from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { useUserStore } from '@/stores/user';
 
@@ -16,8 +17,12 @@ const avatarContent = (
 const Account = () => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
-  const logout = useUserStore((state) => state.logout);
-  const profile = useUserStore((state) => state.profile);
+  const { logout, profile } = useUserStore(
+    useShallow((state) => ({
+      logout: state.logout,
+      profile: state.profile,
+    }))
+  );
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
