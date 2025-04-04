@@ -2,6 +2,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { Button, Divider, IconButton, Popover, Stack, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import { useRouter } from 'next/navigation';
+import { useSnackbar } from 'notistack';
 import React from 'react';
 
 import { useAuthStore } from '@/stores/auth';
@@ -17,8 +18,10 @@ const Account = () => {
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
   const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSignOut = () => {
+    enqueueSnackbar('Sign-out successful.', { variant: 'info' });
     logout();
     setAnchorEl(null);
     router.push('/sign-in');
