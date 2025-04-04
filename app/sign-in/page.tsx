@@ -9,14 +9,14 @@ import { useRouter } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 
-import { useAuthStore } from '@/stores/auth';
+import { useUserStore } from '@/stores/user';
 
 const providers = [{ id: 'credentials', name: 'Credentials' }];
 
 export default function BrandingSignInPage() {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
-  const login = useAuthStore((state) => state.login);
+  const login = useUserStore((state) => state.login);
 
   const loginMutation = useMutation({
     mutationFn: (credentials: { email: string; password: string }) =>

@@ -3,11 +3,11 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { useAuthStore, useAuthHydrated } from '@/stores/auth';
+import { useUserStore, useAuthHydrated } from '@/stores/user';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const token = useAuthStore((state) => state.token);
+  const token = useUserStore((state) => state.token);
   const isHydrated = useAuthHydrated();
 
   useEffect(() => {

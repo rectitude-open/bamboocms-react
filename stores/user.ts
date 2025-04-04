@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type AuthStore = {
+type UserStore = {
   token: string | null;
   login: (token: string) => void;
   logout: () => void;
   _hasHydrated?: boolean;
 };
 
-export const useAuthStore = create<AuthStore>()(
+export const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
       token: null,
@@ -16,7 +16,7 @@ export const useAuthStore = create<AuthStore>()(
       logout: () => set({ token: null }),
     }),
     {
-      name: 'auth-storage',
+      name: 'user-storage',
       partialize: (state) => ({ token: state.token }),
       onRehydrateStorage: () => (state) => {
         if (state) {
@@ -27,4 +27,4 @@ export const useAuthStore = create<AuthStore>()(
   )
 );
 
-export const useAuthHydrated = () => useAuthStore((state: any) => state._hasHydrated === true);
+export const useAuthHydrated = () => useUserStore((state: any) => state._hasHydrated === true);

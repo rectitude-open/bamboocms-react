@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import React from 'react';
 
-import { useAuthStore } from '@/stores/auth';
+import { useUserStore } from '@/stores/user';
 
 const avatarContent = (
   <Avatar alt='Admin' sx={{ width: 32, height: 32 }}>
@@ -16,7 +16,7 @@ const avatarContent = (
 const Account = () => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
-  const logout = useAuthStore((state) => state.logout);
+  const logout = useUserStore((state) => state.logout);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
