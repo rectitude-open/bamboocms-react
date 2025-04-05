@@ -4,7 +4,7 @@ import axiosInstance from '@/lib/axios';
 import type { LoginResponse } from '@/types/auth';
 
 export const authService = {
-  login: (credentials: { email: string; password: string }) =>
+  login: (credentials: { email: string; password: string; remember: boolean }) =>
     axios.post<{ data: LoginResponse }>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, credentials, {
       headers: {
         'Content-Type': 'application/json',

@@ -32,10 +32,12 @@ export default function BrandingSignInPage() {
   const signIn = React.useCallback(
     async (provider: AuthProvider, formData?: any) => {
       if (provider.id === 'credentials' && formData) {
-        const email = formData.get('email') || '';
-        const password = formData.get('password') || '';
+        const email = formData.get('email') ?? '';
+        const password = formData.get('password') ?? '';
+        const remember = formData.get('remember') ?? false;
+
         try {
-          const response = await loginMutation.mutateAsync({ email, password });
+          const response = await loginMutation.mutateAsync({ email, password, remember });
           const { token, user, message } = response?.data?.data ?? {};
 
           if (token && user) {
@@ -67,7 +69,8 @@ export default function BrandingSignInPage() {
         type: 'error',
       } as AuthResponse;
     },
-    [loginMutation, login, router, setProfile, enqueueSnackbar]
+
+    [loginMutation, login, router, setProfile, enqueueSnackbar, redirect]
   );
 
   const theme = useTheme();
