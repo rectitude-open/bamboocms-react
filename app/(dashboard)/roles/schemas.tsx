@@ -17,7 +17,7 @@ export const schema: RJSFSchema = {
     },
     status: {
       type: 'string',
-      enum: ['active', 'subspended'],
+      enum: ['active', 'suspended'],
       default: 'active',
     },
   },
@@ -36,7 +36,7 @@ export const uiSchema: UiSchema<Role> = {
     'ui:widget': 'SwitchWidget',
     'ui:options': {
       onValue: 'active',
-      offValue: 'subspended',
+      offValue: 'suspended',
     },
   },
   'ui:submitButtonOptions': {
