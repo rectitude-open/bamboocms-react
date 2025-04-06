@@ -85,36 +85,36 @@ const RoleTable = () => {
   ];
 
   const tableActionConfig: TableActionConfig<Role> = {
-    add: {
-      formType: 'page',
-      url: '/roles/add',
-      requiredParams: [],
-    },
     // add: {
-    //   title: 'Add Role',
-    //   services: {
-    //     submitService: services.create,
-    //   },
-    //   formType: 'dialog',
-    //   schema,
-    //   uiSchema,
+    //   formType: 'page',
+    //   url: '/roles/add',
+    //   requiredParams: [],
     // },
-    edit: {
-      formType: 'page',
-      url: '/roles/edit',
-      requiredParams: ['id'],
+    add: {
+      title: 'Add Role',
+      services: {
+        submitService: services.create,
+      },
+      formType: 'dialog',
+      schema,
+      uiSchema,
     },
     // edit: {
-    //   title: 'Update Role',
-    //   services: {
-    //     initService: services.view,
-    //     submitService: services.update,
-    //   },
-    //   formType: 'dialog',
-    //   schema,
-    //   uiSchema,
+    //   formType: 'page',
+    //   url: '/roles/edit',
     //   requiredParams: ['id'],
     // },
+    edit: {
+      title: 'Update Role',
+      services: {
+        initService: services.view,
+        submitService: services.update,
+      },
+      formType: 'dialog',
+      schema,
+      uiSchema,
+      requiredParams: ['id'],
+    },
     duplicate: {
       title: 'Duplicate Role',
       services: {
