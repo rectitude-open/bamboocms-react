@@ -1,5 +1,7 @@
+'use client';
+
 import { DashboardLayout, ToolbarActions } from '@toolpad/core/DashboardLayout';
-import { PageContainer } from '@toolpad/core/PageContainer';
+import { PageContainer, PageHeader } from '@toolpad/core/PageContainer';
 import * as React from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
@@ -13,7 +15,12 @@ export default function Layout(props: { children: React.ReactNode }) {
         slots={{
           toolbarActions: CustomToolbarActions,
         }}>
-        <PageContainer>{props.children}</PageContainer>
+        <PageContainer
+          slots={{
+            header: () => <PageHeader title='' />,
+          }}>
+          {props.children}
+        </PageContainer>
       </DashboardLayout>
     </AuthGuard>
   );
