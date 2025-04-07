@@ -1,5 +1,5 @@
-import LogoutIcon from '@mui/icons-material/Logout';
-import { Button, Divider, IconButton, Popover, Stack, Typography } from '@mui/material';
+import { Logout } from '@mui/icons-material';
+import { Avatar, IconButton, ListItemIcon, Menu, MenuItem, Stack } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import React from 'react';
@@ -45,14 +45,13 @@ const Account = () => {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? 'account-menu' : undefined;
 
   return (
     <>
       <Stack sx={{ py: 0.5 }}>
         <IconButton
           onMouseEnter={handleOpen}
-          onMouseLeave={handleClose}
           aria-label={'Admin'}
           size='small'
           aria-haspopup='true'
@@ -61,9 +60,43 @@ const Account = () => {
         </IconButton>
       </Stack>
 
-      <Popover
-        id={id}
+      <Menu
         anchorEl={anchorEl}
+        id={id}
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+        sx={{ pointerEvents: 'none' }}
+        disableAutoFocusItem
+        slotProps={{
+          paper: {
+            onMouseEnter: cancelClose,
+            onMouseLeave: handleClose,
+            elevation: 0,
+            sx: {
+              'pointerEvents': 'auto',
+              'overflow': 'visible',
+              'filter': 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              'mt': 1.5,
+              '& .MuiAvatar-root': {
+                width: 22,
+                height: 22,
+              },
+              '&::before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
+            },
+          },
+        }}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right',
@@ -71,49 +104,20 @@ const Account = () => {
         transformOrigin={{
           vertical: 'top',
           horizontal: 'right',
-        }}
-        open={open}
-        onClose={handleClose}
-        disableRestoreFocus
-        sx={{ pointerEvents: 'none' }}
-        slotProps={{
-          paper: {
-            onMouseEnter: cancelClose,
-            onMouseLeave: handleClose,
-            sx: { pointerEvents: 'auto' },
-          },
         }}>
-        <Stack direction='row' justifyContent='space-between' sx={{ py: 1, px: 2, gap: 2 }}>
-          <Stack direction='row' justifyContent='flex-start' spacing={2} overflow='hidden'>
-            <Stack direction='column' justifyContent='space-evenly' overflow='hidden'>
-              <Typography variant='body2' fontWeight='bolder' noWrap>
-                {profile?.display_name}
-              </Typography>
-              <Typography variant='caption' noWrap>
-                {profile?.email}
-              </Typography>
-              <Divider />
-              <Button
-                variant='outlined'
-                size='small'
-                disableElevation
-                onClick={handleSignOut}
-                sx={{
-                  'textTransform': 'capitalize',
-                  'fontWeight': 'normal',
-                  'filter': 'opacity(0.9)',
-                  'transition': 'filter 0.2s ease-in',
-                  '&:hover': {
-                    filter: 'opacity(1)',
-                  },
-                }}
-                startIcon={<LogoutIcon />}>
-                Sign Out
-              </Button>
-            </Stack>
-          </Stack>
-        </Stack>
-      </Popover>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Avatar />
+          </ListItemIcon>
+          Profile
+        </MenuItem>
+        <MenuItem onClick={handleSignOut}>
+          <ListItemIcon>
+            <Logout fontSize='small' />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
     </>
   );
 };
