@@ -3,16 +3,22 @@
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { authService } from '@/services/auth';
 import { useUserStore, useAuthHydrated } from '@/stores/user';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const token = useUserStore((state) => state.token);
-  const profile = useUserStore.getState().profile;
-  const setProfile = useUserStore((state) => state.setProfile);
-  const logout = useUserStore((state) => state.logout);
+  const { token, logout, profile, setProfile } = useUserStore(
+    useShallow((state) => ({
+      token: state.token,
+      logout: state.logout,
+      profile: state.profile,
+      setProfile: state.setProfile,
+    }))
+  );
+
   const isHydrated = useAuthHydrated();
   const [isErrorHandled, setIsErrorHandled] = useState(false);
 
