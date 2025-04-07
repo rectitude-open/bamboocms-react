@@ -1,6 +1,5 @@
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Button, Divider, IconButton, Popover, Stack, Typography } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
 import { useRouter } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import React from 'react';
@@ -8,11 +7,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { useUserStore } from '@/stores/user';
 
-const avatarContent = (
-  <Avatar alt='Admin' sx={{ width: 32, height: 32 }}>
-    Z
-  </Avatar>
-);
+import AccountAvatar from './AccountAvatar';
 
 const Account = () => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -62,7 +57,7 @@ const Account = () => {
           size='small'
           aria-haspopup='true'
           sx={{ width: 'fit-content', margin: '0 auto' }}>
-          {avatarContent}
+          <AccountAvatar profile={profile} />
         </IconButton>
       </Stack>
 
