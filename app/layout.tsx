@@ -1,7 +1,8 @@
 'use client';
 
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import PeopleIcon from '@mui/icons-material/People';
+import GroupIcon from '@mui/icons-material/Group';
+import PersonIcon from '@mui/icons-material/Person';
 import LinearProgress from '@mui/material/LinearProgress';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -50,7 +51,12 @@ const NAVIGATION: Navigation = [
   {
     segment: 'roles',
     title: 'Roles',
-    icon: <PeopleIcon />,
+    icon: <GroupIcon />,
+  },
+  {
+    segment: 'users',
+    title: 'Users',
+    icon: <PersonIcon />,
   },
 ];
 
