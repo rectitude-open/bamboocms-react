@@ -55,8 +55,13 @@ const RowActions = <T extends MRT_RowData>({
 
       <StyledMenu
         id={`action-menu-${row.id}`}
-        MenuListProps={{
-          'aria-labelledby': `more-button-${row.id}`,
+        slotProps={{
+          list: {
+            'aria-labelledby': `more-button-${row.id}`,
+          },
+          paper: {
+            onMouseLeave: handleMenuClose,
+          },
         }}
         anchorEl={anchorEl}
         open={menuOpen}
